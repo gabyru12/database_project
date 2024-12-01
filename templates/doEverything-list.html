@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dynamic Table</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    {% if columns[0] == "billionaire_id" %}
+        <h1>Billionaires Table</h1>
+    {% elif columns[0] == "city_id" %}
+        <h1>Cities Table</h1>
+    {% elif columns[0] == "country_id" %}
+        <h1>Countries Table</h1>
+    {% elif columns[0] == "company_id" %}
+        <h1>Companies Table</h1>
+    {% elif columns[0] == "state_id" %}
+        <h1>States Table</h1>
+    {% endif %}
+    <table>
+        <thead>
+            <tr>
+                {% for column in columns %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                {% for key, value in row.items() %}
+                    {% if key == "billionaire_id" %}
+                        <td><a href="/billionaires/{{ value }}">{{ value }}</a></td>
+                    {% elif key == "city_id" %}
+                        <td><a href="/cities/{{ value }}">{{ value }}</a></td>
+                    {% elif key == "state_id" %}
+                        <td><a href="/states/{{ value }}">{{ value }}</a></td>
+                    {% elif key == "country_id" %}
+                        <td><a href="/countries/{{ value }}">{{ value }}</a></td>
+                    {% elif key == "company_id" %}
+                        <td><a href="/companies/{{ value }}">{{ value }}</a></td>
+                    {% elif key == "continent_id" %}
+                        <td><a href="/continents/{{ value }}">{{ value }}</a></td>
+                    {% else %}
+                        <td>{{ value }}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ state.res_state }}</h1>
+<p>
+  <b>StateId: </b>{{ state.state_id }}
+</p>
+<p>
+  <b>Name: </b>{{ state.res_state }}
+</p>
+<p>
+  <b>Region: </b>{{ state.res_region }}
+</p>
+{% if state.state_id != 1 %}
+<p>
+  <b>Country: </b><a href="/countries/{{ state.country_id }}">{{ state.country_of_residence }}</a>
+</p>
+{% endif %}
+{% if state.state_id != 1 %}
+    <b>Cities in the state:</b>
+{% else %}
+    <b>Cities that don't belong to any state:</b>
+{% endif %}
+<ul>
+  {% for c in state_city %}
+  <li>
+    <a href="/cities/{{ c.city_id }}">{{ c.city_of_residence }}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

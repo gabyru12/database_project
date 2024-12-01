@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Billionaires database</h1>
+
+<h2>About</h2>
+<p>This web application illustrates the use of the Billionaires
+database. The application is built using 
+<a href="https://docs.python.org/3/library/sqlite3.html">sqlite3</a>,
+<a href="https://flask.palletsprojects.com">Flask</a>, and
+<a href="https://jinja.palletsprojects.com">Jinja</a>.
+</p>
+
+<h2>Some database statistics</h2>
+<table>
+<tr>
+  <th>Items</th>
+  <th>Count</th>
+</tr>
+<tr>
+  <td>Billionaires</td>
+  <td>{{ stats.n_Billionaires }}</td>
+</tr>
+<tr>
+  <td>Countries</td>
+  <td>{{ stats.n_Countries }}</td>
+</tr>
+<tr>
+  <td>Cities</td>
+  <td>{{ stats.n_Cities }}</td>
+</tr>
+<tr>
+  <td>States</td>
+  <td>{{ stats.n_States }}</td>
+</tr>
+<tr>
+  <td>Regions</td>
+  <td>{{ stats.n_Regions }}</td>
+</tr>
+<tr>
+  <td>Continents</td>
+  <td>{{ stats.n_Continents }}</td>
+</tr>
+<tr>
+  <td>Companies</td>
+  <td>{{ stats.n_Companies }}</td>
+</tr>
+<tr>
+  <td>Billionaire_Companies</td>
+  <td>{{ stats.n_Billionaire_Companies }}</td>
+</tr>
+</table>
+
+<h2>Sample functionality</h2>
+
+<h3>Billionaires</h3>
+<p>
+   <a href="/billionaires">List all</a>
+</p>
+<p>Get Billionaire info:
+<form name="billionaireid" action="javascript:window.open('/billionaires/'+document.forms['billionaireid'].elements['id'].value,'_self')">
+   Billionaire Id:<input placeholder="1" name="id" type="number" min="1"/><input type="submit" value="get"/>
+</form>
+</p>
+<p>Search by title:
+<form name="billionairesearch" action="javascript:window.open('/billionaires/search/'+document.forms['billionairesearch'].elements['expr'].value,'_self')">
+  <input name="expr" id="expr" placeholder="Elon" required/>
+  <input type="submit" value="search"/>
+</form>
+</p>
+
+<h3>Companies</h3>
+<p>
+   <a href="/companies">List all</a>
+</p>
+<p>Get company info:
+<form name="companyid" action="javascript:window.open('/companies/'+document.forms['companyid'].elements['id'].value,'_self')">
+   Actor Id:<input placeholder="1" name="id" type="number" min="1"/><input type="submit" value="get"/>
+</form>
+</p>
+  <form name="companysearch" action="javascript:window.open('/companies/search/'+document.forms['companysearch'].elements['expr'].value,'_self')">
+    <input name="expr" id="expr" placeholder="Tesla" required/>
+    <input type="submit" value="search"/>
+  </form>
+
+<h3>Countries</h3>
+<p>
+   <a href="/countries">List all</a>
+</p>
+<p>Get country info:
+<form name="countryid" action="javascript:window.open('/countries/'+document.forms['countryid'].elements['id'].value,'_self')">
+   Genre Id:<input placeholder="1" name="id" type="number" min="1"/><input type="submit" value="get"/>
+</form>
+</p>
+<form name="countrysearch" action="javascript:window.open('/countries/search/'+document.forms['countrysearch'].elements['expr'].value,'_self')">
+  <input name="expr" id="expr" placeholder="United Kingdom" required/>
+  <input type="submit" value="search"/>
+</form>
+
+<h3>Cities</h3>
+<p>
+   <a href="/cities">List all</a>
+</p>
+<p>Get city info:
+<form name="cityid" action="javascript:window.open('/cities/'+document.forms['cityid'].elements['id'].value,'_self')">
+  Genre Id:<input placeholder="1" name="id" type="number" min="1"/><input type="submit" value="get"/>
+</form>
+</p>
+<form name="citysearch" action="javascript:window.open('/cities/search/'+document.forms['citysearch'].elements['expr'].value,'_self')">
+  <input name="expr" id="expr" placeholder="Paris" required/>
+  <input type="submit" value="search"/>
+</form>
+
+<h3>States</h3>
+<p>
+   <a href="/states">List all</a>
+</p>
+<p>Get state info:
+<form name="stateid" action="javascript:window.open('/states/'+document.forms['stateid'].elements['id'].value,'_self')">
+  Genre Id:<input placeholder="1" name="id" type="number" min="1"/><input type="submit" value="get"/>
+</form>
+</p>
+<form name="statesearch" action="javascript:window.open('/states/search/'+document.forms['statesearch'].elements['expr'].value,'_self')">
+  <input name="expr" id="expr" placeholder="Texas" required/>
+  <input type="submit" value="search"/>
+</form>
+
+<!--
+<h3>Staff</h3>
+<p>
+   <a href="/staff">List all</a>
+</p> -->
+{% endblock %}

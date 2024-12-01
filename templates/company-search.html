@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Company search</h1>
+<p><b>Search expression:</b>"{{ search.expr }}"</p>
+<p>
+<ul>
+  {% for c in companies %}
+  <li><a href="/companies/{{ c.company_id }}">{{ c.resource }}</a></li>
+  {% endfor %}
+</ul>
+</p>
+{% endblock %}

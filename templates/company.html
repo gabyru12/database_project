@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ company.resource }}</h1>
+<p>
+  <b>CompanieId: </b>{{ company.company_id }}
+</p>
+<p>
+  <b>Resource: </b>{{ company.resource }}
+</p>
+<p>
+  <b>Industry: </b>{{ company.industry }}
+</p>
+<b>Billionaires working in the company:</b>
+<ul>
+  {% for b in billionaire_companies %}
+  <li>
+    <a href="/billionaires/{{ b.billionaire_id }}">{{ b.fullname }}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

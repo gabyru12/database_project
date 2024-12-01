@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ billionaire.fullname }}</h1>
+<p>
+  <b>BillionaireId: </b>{{ billionaire.billionaire_id }}
+</p>
+<p>
+  <b>FirstName: </b>{{ billionaire.firstname }}
+</p>
+<p>
+  <b>LastName: </b>{{ billionaire.lastname }}
+</p>
+<p>
+  <b>FullName: </b>{{ billionaire.fullname }}
+</p>
+<p>
+  <b>Age: </b>{{ billionaire.age }}
+</p>
+<p>
+  <b>Gender: </b>{{ billionaire.gender }} 
+</p>
+<p>
+  <b>BirthDate: </b>{{ billionaire.birth_date }} 
+</p>
+<p>
+  <b>BirthDay: </b>{{ billionaire.birth_day }} 
+</p>
+<p>
+  <b>BirthMonth: </b>{{ billionaire.birth_month }} 
+</p>
+<p>
+  <b>BirthYear: </b>{{ billionaire.birth_year }} 
+</p>
+<p>
+  <b>Position: </b>{{ billionaire.position }} 
+</p>
+<p>
+  <b>Wealth: </b>{{ billionaire.wealth }} 
+</p>
+<p>
+  <b>City: </b><a href="/cities/{{ billionaire.city_id }}">{{ billionaire.city_of_residence }}</a>
+</p>
+<p>
+  <b>Country: </b><a href="/countries/{{ billionaire.country_id }}">{{ billionaire.country_of_residence }}</a>
+</p>
+<p>
+  <b>Company: </b><a href="/companies/{{ billionaire.company_id }}">{{ billionaire.resource }}, {{ billionaire.industry }}</a>
+</p>
+{% endblock %}

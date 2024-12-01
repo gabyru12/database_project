@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ country.country_of_residence }}</h1>
+<p>
+  <b>CountryId: </b>{{ country.country_id }}
+</p>
+<p>
+  <b>CountryName: </b>{{ country.country_of_residence }}
+</p>
+<p>
+    <b>Continent: </b><a href="/continents/{{ country.continent_id }}">{{ country.continent }}</a>
+</p>
+<p>
+  <b>Latitude: </b>{{ country.country_latitude }}
+</p>
+<p>
+  <b>Longitude: </b>{{ country.country_longitude }}
+</p>
+<p>
+  <b>Population: </b>{{ country.country_pop }} 
+</p>
+<p>
+  <b>Life Expectancy: </b>{{ country.life_exp }} 
+</p>
+<p>
+  <b>Country Price Index: </b>{{ country.cpi_country }} 
+</p>
+<p>
+  <b>Country Price Index Change: </b>{{ country.cpi_change }} 
+</p>
+<p>
+  <b>Gross Domestic Product: </b>{{ country.gdp_country }} 
+</p>
+<p>
+  <b>Gross Primary Education Enrollment: </b>{{ country.g_primary }} 
+</p>
+<p>
+  <b>Gross Tertiary Education Enrollment: </b>{{ country.g_tertiary }} 
+</p>
+<p>
+  <b>Tax Revenue: </b>{{ country.tax_revenue }} 
+</p>
+<p>
+  <b>Tax Rate: </b>{{ country.tax_rate }} 
+</p>
+<b>Cities in the country:</b>
+<ul>
+  {% for cc in country_city %}
+  <li>
+    <a href="/cities/{{ cc.city_id }}">{{ cc.city_of_residence }}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}
