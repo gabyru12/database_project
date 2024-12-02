@@ -1,132 +1,139 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Billionaires database</h1>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">🌟 Billionaires Database 🌟</h1>
 
-<h2>About</h2>
-<p>This web application illustrates the use of the Billionaires
-database. The application is built using 
-<a href="https://docs.python.org/3/library/sqlite3.html">sqlite3</a>,
-<a href="https://flask.palletsprojects.com">Flask</a>, and
-<a href="https://jinja.palletsprojects.com">Jinja</a>.
-</p>
+    <!-- About Section -->
+    <section class="mb-5">
+        <h2>About</h2>
+        <p>
+            This web application illustrates the use of the Billionaires database. The application is built using 
+            <a href="https://docs.python.org/3/library/sqlite3.html" target="_blank">sqlite3</a>, 
+            <a href="https://flask.palletsprojects.com" target="_blank">Flask</a>, and 
+            <a href="https://jinja.palletsprojects.com" target="_blank">Jinja</a>.
+        </p>
+    </section>
 
-<h2>Some database statistics</h2>
-<table>
-<tr>
-  <th>Items</th>
-  <th>Count</th>
-</tr>
-<tr>
-  <td>Billionaires</td>
-  <td>{{ stats.n_Billionaires }}</td>
-</tr>
-<tr>
-  <td>Countries</td>
-  <td>{{ stats.n_Countries }}</td>
-</tr>
-<tr>
-  <td>Cities</td>
-  <td>{{ stats.n_Cities }}</td>
-</tr>
-<tr>
-  <td>States</td>
-  <td>{{ stats.n_States }}</td>
-</tr>
-<tr>
-  <td>Regions</td>
-  <td>{{ stats.n_Regions }}</td>
-</tr>
-<tr>
-  <td>Continents</td>
-  <td>{{ stats.n_Continents }}</td>
-</tr>
-<tr>
-  <td>Companies</td>
-  <td>{{ stats.n_Companies }}</td>
-</tr>
-<tr>
-  <td>Billionaire_Companies</td>
-  <td>{{ stats.n_Billionaire_Companies }}</td>
-</tr>
-</table>
+    <!-- Database Statistics -->
+    <section class="mb-5">
+        <h2>Database Statistics</h2>
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Items</th>
+                    <th>Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Billionaires</td>
+                    <td>{{ stats.n_Billionaires }}</td>
+                </tr>
+                <tr>
+                    <td>Countries</td>
+                    <td>{{ stats.n_Countries }}</td>
+                </tr>
+                <tr>
+                    <td>Cities</td>
+                    <td>{{ stats.n_Cities }}</td>
+                </tr>
+                <tr>
+                    <td>States</td>
+                    <td>{{ stats.n_States }}</td>
+                </tr>
+                <tr>
+                    <td>Regions</td>
+                    <td>{{ stats.n_Regions }}</td>
+                </tr>
+                <tr>
+                    <td>Continents</td>
+                    <td>{{ stats.n_Continents }}</td>
+                </tr>
+                <tr>
+                    <td>Companies</td>
+                    <td>{{ stats.n_Companies }}</td>
+                </tr>
+                <tr>
+                    <td>Billionaire_Companies</td>
+                    <td>{{ stats.n_Billionaire_Companies }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
 
-<h2>Sample functionality</h2>
+    <!-- Functionality Section -->
+    <section class="mb-5">
+        <h2>Sample Functionality</h2>
 
-<h3>Billionaires</h3>
-<p>
-   <a href="/billionaires">List all</a>
-</p>
-<p>Get Billionaire info:
-<form name="billionaireid" action="javascript:window.open('/billionaires/'+document.forms['billionaireid'].elements['id'].value,'_self')">
-   Billionaire Id:<input placeholder="1" name="id" type="number" min="1"/><input type="submit" value="get"/>
-</form>
-</p>
-<p>Search by title:
-<form name="billionairesearch" action="javascript:window.open('/billionaires/search/'+document.forms['billionairesearch'].elements['expr'].value,'_self')">
-  <input name="expr" id="expr" placeholder="Elon" required/>
-  <input type="submit" value="search"/>
-</form>
-</p>
+        <!-- Billionaires -->
+        <div class="mb-4">
+            <h3>Billionaires</h3>
+            <a href="/billionaires" class="btn btn-primary mb-2">List All Billionaires</a>
+            <form name="billionaireid" class="d-flex mb-2" action="javascript:window.open('/billionaires/'+document.forms['billionaireid'].elements['id'].value,'_self')">
+                <input class="form-control me-2" placeholder="Billionaire ID" name="id" type="number" min="1" required />
+                <button type="submit" class="btn btn-secondary">Get Info</button>
+            </form>
+            <form name="billionairesearch" class="d-flex" action="javascript:window.open('/billionaires/search/'+document.forms['billionairesearch'].elements['expr'].value,'_self')">
+                <input class="form-control me-2" placeholder="Search (e.g., Elon)" name="expr" id="expr" required />
+                <input type="submit" value="search"/>
+            </form>
+        </div>
 
-<h3>Companies</h3>
-<p>
-   <a href="/companies">List all</a>
-</p>
-<p>Get company info:
-<form name="companyid" action="javascript:window.open('/companies/'+document.forms['companyid'].elements['id'].value,'_self')">
-   Actor Id:<input placeholder="1" name="id" type="number" min="1"/><input type="submit" value="get"/>
-</form>
-</p>
-  <form name="companysearch" action="javascript:window.open('/companies/search/'+document.forms['companysearch'].elements['expr'].value,'_self')">
-    <input name="expr" id="expr" placeholder="Tesla" required/>
-    <input type="submit" value="search"/>
-  </form>
+        <!-- Companies -->
+        <div class="mb-4">
+            <h3>Companies</h3>
+            <a href="/companies" class="btn btn-primary mb-2">List All Companies</a>
+            <form name="companyid" class="d-flex mb-2" action="javascript:window.open('/companies/'+document.forms['companyid'].elements['id'].value,'_self')">
+                <input class="form-control me-2" placeholder="Company ID" name="id" type="number" min="1" required />
+                <button type="submit" class="btn btn-secondary">Get Info</button>
+            </form>
+            <form name="companysearch" class="d-flex" action="javascript:window.open('/companies/search/'+document.forms['companysearch'].elements['expr'].value,'_self')">
+                <input class="form-control me-2" placeholder="Search (e.g., Tesla)" name="expr" id="expr" required />
+                <input type="submit" value="search"/>
+            </form>
+        </div>
 
-<h3>Countries</h3>
-<p>
-   <a href="/countries">List all</a>
-</p>
-<p>Get country info:
-<form name="countryid" action="javascript:window.open('/countries/'+document.forms['countryid'].elements['id'].value,'_self')">
-   Genre Id:<input placeholder="1" name="id" type="number" min="1"/><input type="submit" value="get"/>
-</form>
-</p>
-<form name="countrysearch" action="javascript:window.open('/countries/search/'+document.forms['countrysearch'].elements['expr'].value,'_self')">
-  <input name="expr" id="expr" placeholder="United Kingdom" required/>
-  <input type="submit" value="search"/>
-</form>
+        <!-- Countries -->
+        <div class="mb-4">
+            <h3>Countries</h3>
+            <a href="/countries" class="btn btn-primary mb-2">List All Countries</a>
+            <form name="countryid" class="d-flex mb-2" action="javascript:window.open('/countries/'+document.forms['countryid'].elements['id'].value,'_self')">
+                <input class="form-control me-2" placeholder="Country ID" name="id" type="number" min="1" required />
+                <button type="submit" class="btn btn-secondary">Get Info</button>
+            </form>
+            <form name="countrysearch" class="d-flex" action="javascript:window.open('/countries/search/'+document.forms['countrysearch'].elements['expr'].value,'_self')">
+                <input class="form-control me-2" placeholder="Search (e.g., United Kingdom)" name="expr" id="expr" required />
+                <input type="submit" value="search"/>
+            </form>
+        </div>
 
-<h3>Cities</h3>
-<p>
-   <a href="/cities">List all</a>
-</p>
-<p>Get city info:
-<form name="cityid" action="javascript:window.open('/cities/'+document.forms['cityid'].elements['id'].value,'_self')">
-  Genre Id:<input placeholder="1" name="id" type="number" min="1"/><input type="submit" value="get"/>
-</form>
-</p>
-<form name="citysearch" action="javascript:window.open('/cities/search/'+document.forms['citysearch'].elements['expr'].value,'_self')">
-  <input name="expr" id="expr" placeholder="Paris" required/>
-  <input type="submit" value="search"/>
-</form>
+        <!-- Cities -->
+        <div class="mb-4">
+            <h3>Cities</h3>
+            <a href="/cities" class="btn btn-primary mb-2">List All Cities</a>
+            <form name="cityid" class="d-flex mb-2" action="javascript:window.open('/cities/'+document.forms['cityid'].elements['id'].value,'_self')">
+                <input class="form-control me-2" placeholder="City ID" name="id" type="number" min="1" required />
+                <button type="submit" class="btn btn-secondary">Get Info</button>
+            </form>
+            <form name="citysearch" class="d-flex" action="javascript:window.open('/cities/search/'+document.forms['citysearch'].elements['expr'].value,'_self')">
+                <input class="form-control me-2" placeholder="Search (e.g., Paris)" name="expr" id="expr" required />
+                <input type="submit" value="search"/>
+            </form>
+        </div>
 
-<h3>States</h3>
-<p>
-   <a href="/states">List all</a>
-</p>
-<p>Get state info:
-<form name="stateid" action="javascript:window.open('/states/'+document.forms['stateid'].elements['id'].value,'_self')">
-  Genre Id:<input placeholder="1" name="id" type="number" min="1"/><input type="submit" value="get"/>
-</form>
-</p>
-<form name="statesearch" action="javascript:window.open('/states/search/'+document.forms['statesearch'].elements['expr'].value,'_self')">
-  <input name="expr" id="expr" placeholder="Texas" required/>
-  <input type="submit" value="search"/>
-</form>
-
-<!--
-<h3>Staff</h3>
-<p>
-   <a href="/staff">List all</a>
-</p> -->
+        <!-- States -->
+        <div class="mb-4">
+            <h3>States</h3>
+            <a href="/states" class="btn btn-primary mb-2">List All States</a>
+            <form name="stateid" class="d-flex mb-2" action="javascript:window.open('/states/'+document.forms['stateid'].elements['id'].value,'_self')">
+                <input class="form-control me-2" placeholder="State ID" name="id" type="number" min="1" required />
+                <button type="submit" class="btn btn-secondary">Get Info</button>
+            </form>
+            <form name="statesearch" class="d-flex" action="javascript:window.open('/states/search/'+document.forms['statesearch'].elements['expr'].value,'_self')">
+                <input class="form-control me-2" placeholder="Search (e.g., Texas)" name="expr" id="expr" required />
+                <input type="submit" value="search"/>
+            </form>
+        </div>
+    </section>
+</div>
 {% endblock %}
