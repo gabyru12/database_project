@@ -1,27 +1,44 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{ city.city_of_residence }}</h1>
-<p>
-  <b>CityId: </b>{{ city.city_id }}
-</p>
-<p>
-  <b>Name: </b>{{ city.city_of_residence }}
-</p>
-<p>
-  <b>Region: </b>{{ city.res_region }}
-</p>
-<p>
-  <b>State: </b><a href="/states/{{ city.state_id }}">{{ city.res_state }}</a>
-</p>
-<p>
-  <b>Country: </b><a href="/countries/{{ city.country_id }}">{{ city.country_of_residence }}</a>
-</p>
-<b>Billionaires working in the city:</b>
-<ul>
-  {% for b in billionaires_city %}
-  <li>
-    <a href="/billionaires/{{ b.billionaire_id }}">{{ b.fullname }}</a>
-  </li>
-  {% endfor %}
-</ul>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">{{ city.city_of_residence }}</h1>
+
+    <div class="card shadow-sm p-4">
+        <!-- City Details -->
+        <h3 class="mb-3">City Details</h3>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>City ID:</strong> {{ city.city_id }}</li>
+            <li class="list-group-item"><strong>Name:</strong> {{ city.city_of_residence }}</li>
+            <li class="list-group-item"><strong>Region:</strong> {{ city.res_region }}</li>
+            <li class="list-group-item">
+                <strong>State:</strong> 
+                <a href="/states/{{ city.state_id }}" class="text-decoration-none">
+                    {{ city.res_state }}
+                </a>
+            </li>
+            <li class="list-group-item">
+                <strong>Country:</strong> 
+                <a href="/countries/{{ city.country_id }}" class="text-decoration-none">
+                    {{ city.country_of_residence }}
+                </a>
+            </li>
+        </ul>
+
+        <!-- Billionaires in the City -->
+        <h3 class="mt-4 mb-3">Billionaires in the City</h3>
+        {% if billionaires_city %}
+            <ul class="list-group">
+                {% for b in billionaires_city %}
+                    <li class="list-group-item">
+                        <a href="/billionaires/{{ b.billionaire_id }}" class="text-decoration-none">
+                            {{ b.fullname }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No billionaires found in this city.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

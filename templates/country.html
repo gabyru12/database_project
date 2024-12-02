@@ -1,54 +1,48 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{ country.country_of_residence }}</h1>
-<p>
-  <b>CountryId: </b>{{ country.country_id }}
-</p>
-<p>
-  <b>CountryName: </b>{{ country.country_of_residence }}
-</p>
-<p>
-    <b>Continent: </b><a href="/continents/{{ country.continent_id }}">{{ country.continent }}</a>
-</p>
-<p>
-  <b>Latitude: </b>{{ country.country_latitude }}
-</p>
-<p>
-  <b>Longitude: </b>{{ country.country_longitude }}
-</p>
-<p>
-  <b>Population: </b>{{ country.country_pop }} 
-</p>
-<p>
-  <b>Life Expectancy: </b>{{ country.life_exp }} 
-</p>
-<p>
-  <b>Country Price Index: </b>{{ country.cpi_country }} 
-</p>
-<p>
-  <b>Country Price Index Change: </b>{{ country.cpi_change }} 
-</p>
-<p>
-  <b>Gross Domestic Product: </b>{{ country.gdp_country }} 
-</p>
-<p>
-  <b>Gross Primary Education Enrollment: </b>{{ country.g_primary }} 
-</p>
-<p>
-  <b>Gross Tertiary Education Enrollment: </b>{{ country.g_tertiary }} 
-</p>
-<p>
-  <b>Tax Revenue: </b>{{ country.tax_revenue }} 
-</p>
-<p>
-  <b>Tax Rate: </b>{{ country.tax_rate }} 
-</p>
-<b>Cities in the country:</b>
-<ul>
-  {% for cc in country_city %}
-  <li>
-    <a href="/cities/{{ cc.city_id }}">{{ cc.city_of_residence }}</a>
-  </li>
-  {% endfor %}
-</ul>
+<div class="container mt-4">
+    <!-- Country Name -->
+    <h1 class="text-center mb-4">{{ country.country_of_residence }}</h1>
+
+    <!-- Country Details -->
+    <div class="card shadow-sm p-4">
+        <h3 class="mb-3">Country Details</h3>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Country ID:</strong> {{ country.country_id }}</li>
+            <li class="list-group-item"><strong>Name:</strong> {{ country.country_of_residence }}</li>
+            <li class="list-group-item"><strong>Continent:</strong> 
+                <a href="/continents/{{ country.continent_id }}" class="text-decoration-none">
+                    {{ country.continent }}
+                </a>
+            </li>
+            <li class="list-group-item"><strong>Latitude:</strong> {{ country.country_latitude }}</li>
+            <li class="list-group-item"><strong>Longitude:</strong> {{ country.country_longitude }}</li>
+            <li class="list-group-item"><strong>Population:</strong> {{ country.country_pop }}</li>
+            <li class="list-group-item"><strong>Life Expectancy:</strong> {{ country.life_exp }}</li>
+            <li class="list-group-item"><strong>Country Price Index:</strong> {{ country.cpi_country }}</li>
+            <li class="list-group-item"><strong>CPI Change:</strong> {{ country.cpi_change }}</li>
+            <li class="list-group-item"><strong>Gross Domestic Product:</strong> {{ country.gdp_country }}</li>
+            <li class="list-group-item"><strong>Primary Education Enrollment:</strong> {{ country.g_primary }}</li>
+            <li class="list-group-item"><strong>Tertiary Education Enrollment:</strong> {{ country.g_tertiary }}</li>
+            <li class="list-group-item"><strong>Tax Revenue:</strong> {{ country.tax_revenue }}</li>
+            <li class="list-group-item"><strong>Tax Rate:</strong> {{ country.tax_rate }}</li>
+        </ul>
+
+        <!-- Cities in the Country -->
+        <h3 class="mt-4 mb-3">Cities in the Country</h3>
+        {% if country_city %}
+            <ul class="list-group">
+                {% for cc in country_city %}
+                    <li class="list-group-item">
+                        <a href="/cities/{{ cc.city_id }}" class="text-decoration-none">
+                            {{ cc.city_of_residence }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No cities found for this country.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

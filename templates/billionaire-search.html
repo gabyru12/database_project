@@ -1,12 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Billionaire search</h1>
-<p><b>Search expression:</b>"{{ search.expr }}"</p>
-<p>
-<ul>
-  {% for b in billionaires %}
-  <li><a href="/billionaires/{{ b.billionaire_id }}">{{ b.fullname }}</a></li>
-  {% endfor %}
-</ul>
-</p>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">🔍 Billionaire Search</h1>
+    
+    <!-- Display the search expression -->
+    <p><b>Search expression:</b> "{{ search.expr }}"</p>
+
+    <!-- Results Section -->
+    <div class="mt-4">
+        {% if billionaires %}
+            <ul class="list-group">
+                {% for b in billionaires %}
+                    <li class="list-group-item">
+                        <a href="/billionaires/{{ b.billionaire_id }}" class="text-decoration-none">
+                            {{ b.fullname }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No billionaires found matching your search.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

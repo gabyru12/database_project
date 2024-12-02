@@ -1,12 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Company search</h1>
-<p><b>Search expression:</b>"{{ search.expr }}"</p>
-<p>
-<ul>
-  {% for c in companies %}
-  <li><a href="/companies/{{ c.company_id }}">{{ c.resource }}</a></li>
-  {% endfor %}
-</ul>
-</p>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">🏢 Company Search</h1>
+
+    <!-- Search Expression -->
+    <p><strong>Search expression:</strong> "{{ search.expr }}"</p>
+
+    <!-- Results Section -->
+    <div class="mt-4">
+        {% if companies %}
+            <ul class="list-group">
+                {% for c in companies %}
+                    <li class="list-group-item">
+                        <a href="/companies/{{ c.company_id }}" class="text-decoration-none">
+                            {{ c.resource }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No companies found matching your search.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

@@ -1,30 +1,42 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{ state.res_state }}</h1>
-<p>
-  <b>StateId: </b>{{ state.state_id }}
-</p>
-<p>
-  <b>Name: </b>{{ state.res_state }}
-</p>
-<p>
-  <b>Region: </b>{{ state.res_region }}
-</p>
-{% if state.state_id != 1 %}
-<p>
-  <b>Country: </b><a href="/countries/{{ state.country_id }}">{{ state.country_of_residence }}</a>
-</p>
-{% endif %}
-{% if state.state_id != 1 %}
-    <b>Cities in the state:</b>
-{% else %}
-    <b>Cities that don't belong to any state:</b>
-{% endif %}
-<ul>
-  {% for c in state_city %}
-  <li>
-    <a href="/cities/{{ c.city_id }}">{{ c.city_of_residence }}</a>
-  </li>
-  {% endfor %}
-</ul>
+<div class="container mt-4">
+    <!-- State Name -->
+    <h1 class="text-center mb-4">{{ state.res_state }}</h1>
+
+    <!-- State Details -->
+    <div class="card shadow-sm p-4">
+      <h3 class="mb-3">State Details</h3>
+      <ul class="list-group list-group-flush">
+          <li class="list-group-item"><strong>State ID:</strong> {{ state.state_id }}</li>
+          <li class="list-group-item"><strong>Name:</strong> {{ state.res_state }}</li>
+          <li class="list-group-item"><strong>Region:</strong> {{ state.res_region }}</li>
+          {% if state.state_id != 1 %}
+            <li class="list-group-item"><strong>Country:</strong><a href="/countries/{{ state.country_id }}" class="text-decoration-none"> {{ state.country_of_residence }}</a></li>
+          {% endif %}
+      </ul>
+
+      <!-- Cities in the state -->
+      <h3 class="mt-4 mb-3">
+        {% if state.state_id != 1 %}
+            Cities in the state:
+        {% else %}
+            Cities that don't belong to any state:
+        {% endif %}
+      </h3>
+      {% if state_city %}
+          <ul class="list-group">
+              {% for c in state_city %}
+                  <li class="list-group-item">
+                      <a href="/cities/{{ c.city_id }}" class="text-decoration-none">
+                          {{ c.city_of_residence }}
+                      </a>
+                  </li>
+              {% endfor %}
+          </ul>
+      {% else %}
+          <p class="text-muted">No cities found in this state.</p>
+      {% endif %}
+    </div>      
+</div>
 {% endblock %}

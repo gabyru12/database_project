@@ -1,49 +1,53 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{ billionaire.fullname }}</h1>
-<p>
-  <b>BillionaireId: </b>{{ billionaire.billionaire_id }}
-</p>
-<p>
-  <b>FirstName: </b>{{ billionaire.firstname }}
-</p>
-<p>
-  <b>LastName: </b>{{ billionaire.lastname }}
-</p>
-<p>
-  <b>FullName: </b>{{ billionaire.fullname }}
-</p>
-<p>
-  <b>Age: </b>{{ billionaire.age }}
-</p>
-<p>
-  <b>Gender: </b>{{ billionaire.gender }} 
-</p>
-<p>
-  <b>BirthDate: </b>{{ billionaire.birth_date }} 
-</p>
-<p>
-  <b>BirthDay: </b>{{ billionaire.birth_day }} 
-</p>
-<p>
-  <b>BirthMonth: </b>{{ billionaire.birth_month }} 
-</p>
-<p>
-  <b>BirthYear: </b>{{ billionaire.birth_year }} 
-</p>
-<p>
-  <b>Position: </b>{{ billionaire.position }} 
-</p>
-<p>
-  <b>Wealth: </b>{{ billionaire.wealth }} 
-</p>
-<p>
-  <b>City: </b><a href="/cities/{{ billionaire.city_id }}">{{ billionaire.city_of_residence }}</a>
-</p>
-<p>
-  <b>Country: </b><a href="/countries/{{ billionaire.country_id }}">{{ billionaire.country_of_residence }}</a>
-</p>
-<p>
-  <b>Company: </b><a href="/companies/{{ billionaire.company_id }}">{{ billionaire.resource }}, {{ billionaire.industry }}</a>
-</p>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">{{ billionaire.fullname }}</h1>
+
+    <div class="card shadow-sm p-4">
+        <!-- Personal Details -->
+        <h3 class="mb-3">Personal Details</h3>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Billionaire ID:</strong> {{ billionaire.billionaire_id }}</li>
+            <li class="list-group-item"><strong>First Name:</strong> {{ billionaire.firstname }}</li>
+            <li class="list-group-item"><strong>Last Name:</strong> {{ billionaire.lastname }}</li>
+            <li class="list-group-item"><strong>Full Name:</strong> {{ billionaire.fullname }}</li>
+            <li class="list-group-item"><strong>Age:</strong> {{ billionaire.age }}</li>
+            <li class="list-group-item"><strong>Gender:</strong> {{ billionaire.gender }}</li>
+        </ul>
+
+        <!-- Birth Details -->
+        <h3 class="mt-4 mb-3">Birth Details</h3>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Birth Date:</strong> {{ billionaire.birth_date }}</li>
+            <li class="list-group-item"><strong>Birth Day:</strong> {{ billionaire.birth_day }}</li>
+            <li class="list-group-item"><strong>Birth Month:</strong> {{ billionaire.birth_month }}</li>
+            <li class="list-group-item"><strong>Birth Year:</strong> {{ billionaire.birth_year }}</li>
+        </ul>
+
+        <!-- Career & Location -->
+        <h3 class="mt-4 mb-3">Career & Location</h3>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Position:</strong> {{ billionaire.position }}</li>
+            <li class="list-group-item"><strong>Wealth:</strong> {{ billionaire.wealth }}</li>
+            <li class="list-group-item">
+                <strong>City:</strong> 
+                <a href="/cities/{{ billionaire.city_id }}" class="text-decoration-none">
+                    {{ billionaire.city_of_residence }}
+                </a>
+            </li>
+            <li class="list-group-item">
+                <strong>Country:</strong> 
+                <a href="/countries/{{ billionaire.country_id }}" class="text-decoration-none">
+                    {{ billionaire.country_of_residence }}
+                </a>
+            </li>
+            <li class="list-group-item">
+                <strong>Company:</strong> 
+                <a href="/companies/{{ billionaire.company_id }}" class="text-decoration-none">
+                    {{ billionaire.resource }}, {{ billionaire.industry }}
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
 {% endblock %}

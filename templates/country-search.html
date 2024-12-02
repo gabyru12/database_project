@@ -1,12 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Country search</h1>
-<p><b>Search expression:</b>"{{ search.expr }}"</p>
-<p>
-<ul>
-  {% for c in countries %}
-  <li><a href="/countries/{{ c.country_id }}">{{ c.country_of_residence }}</a></li>
-  {% endfor %}
-</ul>
-</p>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">🌍 Country Search</h1>
+
+    <!-- Search Expression -->
+    <p><strong>Search expression:</strong> "{{ search.expr }}"</p>
+
+    <!-- Results Section -->
+    <div class="mt-4">
+        {% if countries %}
+            <ul class="list-group">
+                {% for c in countries %}
+                    <li class="list-group-item">
+                        <a href="/countries/{{ c.country_id }}" class="text-decoration-none">
+                            {{ c.country_of_residence }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No countries found matching your search.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

@@ -1,12 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>City search</h1>
-<p><b>Search expression:</b>"{{ search.expr }}"</p>
-<p>
-<ul>
-  {% for c in cities %}
-  <li><a href="/cities/{{ c.city_id }}">{{ c.city_of_residence }}</a></li>
-  {% endfor %}
-</ul>
-</p>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">🌍 City Search</h1>
+
+    <!-- Search Expression -->
+    <p><strong>Search expression:</strong> "{{ search.expr }}"</p>
+
+    <!-- Results Section -->
+    <div class="mt-4">
+        {% if cities %}
+            <ul class="list-group">
+                {% for c in cities %}
+                    <li class="list-group-item">
+                        <a href="/cities/{{ c.city_id }}" class="text-decoration-none">
+                            {{ c.city_of_residence }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No cities found matching your search.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

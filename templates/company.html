@@ -1,21 +1,33 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{ company.resource }}</h1>
-<p>
-  <b>CompanieId: </b>{{ company.company_id }}
-</p>
-<p>
-  <b>Resource: </b>{{ company.resource }}
-</p>
-<p>
-  <b>Industry: </b>{{ company.industry }}
-</p>
-<b>Billionaires working in the company:</b>
-<ul>
-  {% for b in billionaire_companies %}
-  <li>
-    <a href="/billionaires/{{ b.billionaire_id }}">{{ b.fullname }}</a>
-  </li>
-  {% endfor %}
-</ul>
+<div class="container mt-4">
+    <!-- Company Name -->
+    <h1 class="text-center mb-4">{{ company.resource }}</h1>
+
+    <!-- Company Details -->
+    <div class="card shadow-sm p-4">
+        <h3 class="mb-3">Company Details</h3>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Company ID:</strong> {{ company.company_id }}</li>
+            <li class="list-group-item"><strong>Resource:</strong> {{ company.resource }}</li>
+            <li class="list-group-item"><strong>Industry:</strong> {{ company.industry }}</li>
+        </ul>
+
+        <!-- Billionaires Associated with the Company -->
+        <h3 class="mt-4 mb-3">Billionaires in the Company</h3>
+        {% if billionaire_companies %}
+            <ul class="list-group">
+                {% for b in billionaire_companies %}
+                    <li class="list-group-item">
+                        <a href="/billionaires/{{ b.billionaire_id }}" class="text-decoration-none">
+                            {{ b.fullname }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No billionaires found associated with this company.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
