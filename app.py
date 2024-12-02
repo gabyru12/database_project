@@ -319,5 +319,19 @@ def view_state_details(id):
   return render_template('state.html', 
            state=state, state_city=state_city)
 
+@APP.route('/states/search/<expr>/')
+def search_state(expr):
+  search = { 'expr': expr }
+  expr = '%' + expr + '%'
+  states = execute(
+      ''' 
+      SELECT state_id, res_state
+      FROM States 
+      WHERE res_state LIKE ?
+      ''', [expr]).fetchall()
+  
+  return render_template('state-search.html',
+           search=search,states=states)
+
 if __name__ == '__main__':
     APP.run(debug=True)
