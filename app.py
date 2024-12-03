@@ -240,11 +240,11 @@ def list_cities():
 def view_city_details(id):
   city = execute(
     '''
-    SELECT c.city_id, c.city_of_residence, c.region_id, c.state_id, c.country_id, c1.country_of_residence, r.res_region, s.res_state
+    SELECT c.city_id, c.city_of_residence, r.region_id, c.state_id, c.country_id, c1.country_of_residence, r.res_region, s.res_state
     FROM Cities c
     JOIN Countries c1 on c1.country_id = c.country_id
-    JOIN Regions r on r.region_id = c.region_id
     JOIN States s on s.state_id = c.state_id
+    JOIN Regions r on s.region_id = r.region_id
     WHERE c.city_id = ?
     ''', [id]).fetchone()
 
@@ -300,7 +300,7 @@ def view_state_details(id):
     SELECT s.state_id, s.res_state, r.res_region, c1.country_id, c1.country_of_residence
     FROM States s
     JOIN Cities c on c.state_id = s.state_id
-    JOIN Regions r on r.region_id = c.region_id
+    JOIN Regions r on r.region_id = s.region_id
     JOIN Countries c1 on c1.country_id = c.country_id
     WHERE s.state_id = ?
     ''', [id]).fetchone()
