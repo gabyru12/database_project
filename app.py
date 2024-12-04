@@ -1,6 +1,6 @@
 import warnings
 warnings.filterwarnings('ignore', category=FutureWarning)
-from flask import abort, render_template, Flask
+from flask import Flask, request, render_template, jsonify, g, abort
 import logging
 import sqlite3
 import re
@@ -332,6 +332,20 @@ def search_state(expr):
   
   return render_template('state-search.html',
            search=search,states=states)
+
+@APP.route('/run-sql', methods=['POST'])
+def run_sql():
+  global DB
+  query = request.form.get('query')
+
+  try:
+      table = execute(query)
+      columns = [desc[0] for desc in DB['cursor'].description]
+      rows = [dict(zip(columns, row)) for row in DB['cursor'].fetchall()]
+      return render_template('sql_results.html', query=query, columns=columns, rows=rows)
+  except sqlite3.Error as e:
+      error_message = str(e)
+      return render_template('sql_results.html', query=query, error=error_message)
 
 if __name__ == '__main__':
     APP.run(debug=True)
