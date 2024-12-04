@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-4">
-    <h1 class="text-center mb-4">🌟 Billionaires Database 🌟</h1>
+    <h1 class="text-center mb-4">💲 Billionaires Database 💲</h1>
 
     <!-- About Section -->
     <section class="mb-5">
@@ -75,7 +75,7 @@
             </form>
             <form name="billionairesearch" class="d-flex" action="javascript:window.open('/billionaires/search/'+document.forms['billionairesearch'].elements['expr'].value,'_self')">
                 <input class="form-control me-2" placeholder="Search (e.g., Elon)" name="expr" id="expr" required />
-                <input type="submit" value="search"/>
+                <button type="submit" class="btn btn-primary search-button">Search</button>
             </form>
         </div>
 
@@ -89,7 +89,7 @@
             </form>
             <form name="companysearch" class="d-flex" action="javascript:window.open('/companies/search/'+document.forms['companysearch'].elements['expr'].value,'_self')">
                 <input class="form-control me-2" placeholder="Search (e.g., Tesla)" name="expr" id="expr" required />
-                <input type="submit" value="search"/>
+                <button type="submit" class="btn btn-primary search-button">Search</button>
             </form>
         </div>
 
@@ -103,7 +103,7 @@
             </form>
             <form name="countrysearch" class="d-flex" action="javascript:window.open('/countries/search/'+document.forms['countrysearch'].elements['expr'].value,'_self')">
                 <input class="form-control me-2" placeholder="Search (e.g., United Kingdom)" name="expr" id="expr" required />
-                <input type="submit" value="search"/>
+                <button type="submit" class="btn btn-primary search-button">Search</button>
             </form>
         </div>
 
@@ -117,7 +117,7 @@
             </form>
             <form name="citysearch" class="d-flex" action="javascript:window.open('/cities/search/'+document.forms['citysearch'].elements['expr'].value,'_self')">
                 <input class="form-control me-2" placeholder="Search (e.g., Paris)" name="expr" id="expr" required />
-                <input type="submit" value="search"/>
+                <button type="submit" class="btn btn-primary search-button">Search</button>
             </form>
         </div>
 
@@ -131,7 +131,7 @@
             </form>
             <form name="statesearch" class="d-flex" action="javascript:window.open('/states/search/'+document.forms['statesearch'].elements['expr'].value,'_self')">
                 <input class="form-control me-2" placeholder="Search (e.g., Texas)" name="expr" id="expr" required />
-                <input type="submit" value="search"/>
+                <button type="submit" class="btn btn-primary search-button">Search</button>
             </form>
         </div>
 
