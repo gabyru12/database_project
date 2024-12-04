@@ -134,6 +134,15 @@
                 <input type="submit" value="search"/>
             </form>
         </div>
+
+        <!-- SQL Query Section -->
+        <div class="mb-4">
+            <h3>Run SQL Query</h3>
+            <form method="POST" action="/run-sql" class="d-flex flex-column">
+                <textarea class="form-control mb-2" name="query" rows="5" placeholder="Enter your SQL query here..." required></textarea>
+                <button type="submit" class="btn btn-danger">Execute SQL</button>
+            </form>
+        </div>
     </section>
 </div>
 {% endblock %}
