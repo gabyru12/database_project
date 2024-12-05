@@ -1,6 +1,6 @@
 import warnings
 warnings.filterwarnings('ignore', category=FutureWarning)
-from flask import Flask, request, render_template, jsonify, g, abort
+from flask import Flask, request, render_template, abort
 import logging
 import sqlite3
 import re
@@ -53,6 +53,8 @@ def index():
       (SELECT COUNT(*) n_Companies FROM Companies)
     JOIN 
       (SELECT COUNT(*) n_Billionaire_Companies FROM Billionaire_Companies)
+    JOIN 
+      (SELECT COUNT(*) n_Citizenships FROM Citizenships)
     ''').fetchone()
     logging.info(stats)
     return render_template('index.html',stats=stats)
@@ -63,10 +65,13 @@ def list_billionaires():
     global DB
     billionaires = execute(
       '''
-      SELECT b.billionaire_id, b.fullname, b.age, b.wealth, b.city_id, b.country_id, c.company_id 
+      SELECT b.billionaire_id, b.fullname, b.age, b.wealth, b.city_id, c2.country_id, c.company_id 
       FROM Billionaires b
       JOIN Billionaire_Companies bc on b.billionaire_id = bc.billionaire_id
       JOIN Companies c on c.company_id = bc.company_id
+      JOIN Cities c1 on c1.city_id = b.city_id
+      JOIN States s on s.state_id = c1.state_id
+      JOIN Countries c2 on c2.country_id = s.country_id
       ORDER BY b.billionaire_id
       ''')
     
@@ -80,10 +85,12 @@ def list_billionaires():
 def get_billionaire(id):
   billionaire = execute(
       '''
-      SELECT b.billionaire_id, b.firstname, b.lastname, b.fullname, b.age, b.gender, b.birth_date, b.birth_day, b.birth_month, b.birth_year, b.position, b.wealth, b.city_id, c.city_of_residence, b.country_id, c1.country_of_residence, com.company_id, com.resource, com.industry
+      SELECT b.billionaire_id, b.firstname, b.lastname, b.fullname, b.age, b.gender, b.birth_date, b.birth_day, b.birth_month, b.birth_year, b.position, b.wealth, b.city_id, c.city_of_residence, c1.country_id, c1.country_of_residence, com.company_id, com.resource, com.industry, ci.citizenship
       FROM Billionaires b
+      JOIN Citizenships ci on ci.citizenship_country_id = b.citizenship_country_id
       JOIN Cities c on b.city_id = c.city_id
-      JOIN Countries c1 on b.country_id = c1.country_id
+      JOIN States s on s.state_id = c.state_id
+      JOIN Countries c1 on s.country_id = c1.country_id
       JOIN Billionaire_Companies bc on bc.billionaire_id = b.billionaire_id
       JOIN Companies com on com.company_id = bc.company_id
       WHERE b.billionaire_id = ? 
@@ -186,7 +193,8 @@ def view_country_details(id):
     '''
     SELECT c.country_id, c.country_of_residence, c.continent_id, c.country_latitude, c.country_longitude, c.country_pop, c.life_exp, c.cpi_country, c.cpi_change, c.gdp_country, c.g_primary, c.g_tertiary, c.tax_revenue, c.tax_rate, c2.continent
     FROM Countries c
-    JOIN Cities c1 on c1.country_id = c.country_id
+    JOIN States s on s.country_id = c.country_id
+    JOIN Cities c1 on c1.state_id = s.state_id
     JOIN Continents c2 on c2.continent_id = c.continent_id
     WHERE c.country_id = ?
     ''', [id]).fetchone()
@@ -198,8 +206,9 @@ def view_country_details(id):
      '''
     SELECT c1.city_id, c1.city_of_residence
     FROM Cities c1
-    JOIN Countries c on c.country_id = c1.country_id
-    WHERE c1.country_id = ? 
+    JOIN States s on s.state_id = c1.state_id
+    JOIN Countries c on c.country_id = s.country_id
+    WHERE c.country_id = ? 
     ''', [id]).fetchall()
 
   return render_template('country.html', 
@@ -226,9 +235,11 @@ def search_countries(expr):
 def list_cities():
     global DB
     countries = execute('''
-      SELECT city_id, city_of_residence, state_id, country_id  
-      FROM Cities
-      ORDER BY city_id
+      SELECT c.city_id, c.city_of_residence, c.state_id, c1.country_id  
+      FROM Cities c
+      JOIN States s on s.state_id = c.state_id
+      JOIN Countries c1 on c1.country_id = s.country_id
+      ORDER BY c.city_id
     ''')
 
     columns = [desc[0] for desc in DB['cursor'].description]
@@ -240,10 +251,10 @@ def list_cities():
 def view_city_details(id):
   city = execute(
     '''
-    SELECT c.city_id, c.city_of_residence, r.region_id, c.state_id, c.country_id, c1.country_of_residence, r.res_region, s.res_state
+    SELECT c.city_id, c.city_of_residence, r.region_id, c.state_id, c1.country_id, c1.country_of_residence, r.res_region, s.res_state
     FROM Cities c
-    JOIN Countries c1 on c1.country_id = c.country_id
     JOIN States s on s.state_id = c.state_id
+    JOIN Countries c1 on c1.country_id = s.country_id
     JOIN Regions r on s.region_id = r.region_id
     WHERE c.city_id = ?
     ''', [id]).fetchone()
@@ -301,7 +312,7 @@ def view_state_details(id):
     FROM States s
     JOIN Cities c on c.state_id = s.state_id
     JOIN Regions r on r.region_id = s.region_id
-    JOIN Countries c1 on c1.country_id = c.country_id
+    JOIN Countries c1 on c1.country_id = s.country_id
     WHERE s.state_id = ?
     ''', [id]).fetchone()
 
@@ -333,19 +344,28 @@ def search_state(expr):
   return render_template('state-search.html',
            search=search,states=states)
 
-@APP.route('/run-sql', methods=['POST'])
-def run_sql():
-  global DB
-  query = request.form.get('query')
+PROHIBITEDCOMMANDS = ["DROP", "DELETE", "UPDATE", "INSERT", "ALTER", "TRUNCATE", "REPLACE", "CREATE"]
 
-  try:
-      table = execute(query)
-      columns = [desc[0] for desc in DB['cursor'].description]
-      rows = [dict(zip(columns, row)) for row in DB['cursor'].fetchall()]
-      return render_template('sql_results.html', query=query, columns=columns, rows=rows)
-  except sqlite3.Error as e:
-      error_message = str(e)
-      return render_template('sql_results.html', query=query, error=error_message)
+@APP.route('/run-sql', methods=['POST'])
+def runsql():
+    global DB
+    query = request.form.get('query')
+
+    # Validação de segurança
+    if any(command in query.upper() for command in PROHIBITEDCOMMANDS):
+        logging.warning("Query bloqueada: {}".format(query))
+        errormessage = "Operação não permitida! Certifique-se de que a query não contenha comandos como DROP, DELETE, UPDATE, etc."
+        return render_template('sql_results.html', query=query, error=errormessage)
+
+    try:
+        # Executa a query segura
+        table = execute(query)
+        columns = [desc[0] for desc in DB['cursor'].description]
+        rows = [dict(zip(columns, row)) for row in DB['cursor'].fetchall()]
+        return render_template('sql_results.html', query=query, columns=columns, rows=rows)
+    except sqlite3.Error as e:
+        error_message = str(e)
+        return render_template('sql_results.html', query=query, error=error_message)
 
 if __name__ == '__main__':
     APP.run(debug=True)
