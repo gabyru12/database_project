@@ -274,7 +274,7 @@ def list_cities():
     columns1 = [desc[0] for desc in DB['cursor'].description]
     references = [dict(zip(columns1, row)) for row in DB['cursor'].fetchall()]
 
-    first_key = next(iter(references[0])) 
+    first_key = next(iter(references[0]))
 
     return render_template('doEverything-list.html', columns=columns, references=references, first_key=first_key)
 
@@ -386,7 +386,7 @@ def question1():
     except ValueError:
         return "Invalid input! Please enter a valid number.", 400
     query = '''
-            SELECT c.industry, SUM(b.wealth) AS total_wealth_millions
+            SELECT c.industry, COUNT(b.billionaire_id) AS num_billionaires, SUM(b.wealth) AS total_wealth_millions
             FROM Billionaire_Companies bc
             JOIN Billionaires b ON bc.billionaire_id = b.billionaire_id
             JOIN Companies c ON bc.company_id = c.company_id
@@ -413,13 +413,11 @@ def question2():
     except ValueError:
         return "Invalid input! Please enter a valid number.", 400
     query = '''
-            SELECT b.fullname, b.age, c2.country_id, c.industry , b.wealth AS 'wealth (millions)'
+            SELECT b.fullname, b.age, cz.citizenship, c.industry , b.wealth AS 'wealth (millions)'
             FROM Billionaire_Companies bc
             JOIN Companies c ON bc.company_id = c.company_id
             JOIN Billionaires b ON bc.billionaire_id = b.billionaire_id
-            JOIN Cities c1 on c1.city_id = b.city_id
-            JOIN States s on s.state_id = c1.state_id
-            JOIN Countries c2 on c2.country_id = s.country_id
+            JOin Citizenships cz on b.citizenship_country_id = cz.citizenship_country_id
             ORDER BY b.age
             LIMIT ?;
         '''
@@ -431,14 +429,235 @@ def question2():
     except sqlite3.Error as e:
         error_message = str(e)
         return render_template('sql_results.html', query=query, error=error_message)
-
+    
 @APP.route('/3_Question', methods=['POST'])
 def question3():
     global DB
+    n_percentage = request.form.get('value1')
+    n_countries = request.form.get('value2')
+    try:
+        n_percentage = int(n_percentage)
+        n_countries = int(n_countries)
+    except ValueError:
+        return "Invalid input! Please enter a valid number.", 400
+    query = '''
+          SELECT 
+            aux.country_of_residence, ROUND(aux.gdp_impact_ppm,2) AS gdp_impact_ppm,
+            ROUND(aux.gdp_impact_ppm / MIN(aux.gdp_impact_ppm) OVER (),1) AS 'impact (compared to others)'
+          FROM (
+              SELECT 
+                  co.country_of_residence, 
+                  (SUM(b.wealth) * ?/100) / co.gdp_country * 1000000 AS gdp_impact_ppm
+              FROM Billionaires b
+              JOIN Cities c ON b.city_id = c.city_id
+              JOIN States s ON c.state_id = s.state_id
+              JOIN Countries co ON s.country_id = co.country_id
+              GROUP BY co.country_of_residence
+              ORDER BY gdp_impact_ppm DESC
+              LIMIT ?
+              ) AS aux
+          ORDER BY aux.gdp_impact_ppm DESC;
+        '''
+    try:
+        question = execute(query, [n_percentage, n_countries])
+        columns = [desc[0] for desc in DB['cursor'].description]
+        rows = [dict(zip(columns, row)) for row in DB['cursor'].fetchall()]
+        return render_template('sql_results.html', query=query, columns=columns, rows=rows)
+    except sqlite3.Error as e:
+        error_message = str(e)
+        return render_template('sql_results.html', query=query, error=error_message)
+    
+@APP.route('/4_Question', methods=['POST'])
+def question4():
+    global DB
+    n_industries = request.form.get('value1')
+    min_latitude = request.form.get('value2')
+    max_latitude = request.form.get('value3')
+    try:
+        n_industries = int(n_industries)
+        min_latitude = float(min_latitude)
+        max_latitude = float(max_latitude)
+    except ValueError:
+        return "Invalid input! Please enter a valid number.", 400
+    query = '''
+            SELECT c.industry, 
+              COUNT(DISTINCT co.country_of_residence) AS num_countries
+            FROM Companies c
+            JOIN Billionaire_Companies bc ON c.company_id = bc.company_id
+            JOIN Billionaires b ON bc.billionaire_id = b.billionaire_id
+            JOIN Cities c ON b.city_id = c.city_id
+            JOIN States s ON c.state_id = s.state_id
+            JOIN Countries co ON s.country_id = co.country_id
+            WHERE co.country_latitude BETWEEN ? AND ?
+            GROUP BY c.industry
+            ORDER BY num_countries DESC
+            LIMIT ?;
+        '''
+    try:
+        question = execute(query, [min_latitude,max_latitude,n_industries,])
+        columns = [desc[0] for desc in DB['cursor'].description]
+        rows = [dict(zip(columns, row)) for row in DB['cursor'].fetchall()]
+        return render_template('sql_results.html', query=query, columns=columns, rows=rows)
+    except sqlite3.Error as e:
+        error_message = str(e)
+        return render_template('sql_results.html', query=query, error=error_message)
+    
+@APP.route('/5_Question', methods=['POST'])
+def question5():
+    global DB
+    n_cities = request.form.get('value1')
+    country_name = request.form.get('value2')
+    try:
+        n_cities = int(n_cities)
+        if not country_name or len(country_name.strip()) == 0:
+            raise ValueError("Country name cannot be empty")
+    except ValueError:
+        return "Invalid input! Please enter a valid number.", 400
+    query = '''
+            SELECT ci.city_of_residence, 
+              COUNT(b.billionaire_id) AS num_billionaires
+            FROM Billionaires b
+            JOIN Cities ci ON b.city_id = ci.city_id
+            JOIN Cities c ON b.city_id = c.city_id
+            JOIN States s ON c.state_id = s.state_id
+            JOIN Countries co ON s.country_id = co.country_id
+            WHERE co.country_of_residence = ?
+            GROUP BY ci.city_of_residence
+            ORDER BY num_billionaires DESC
+            LIMIT ?;
+        '''
+    try:
+        question = execute(query, [country_name,n_cities])
+        columns = [desc[0] for desc in DB['cursor'].description]
+        rows = [dict(zip(columns, row)) for row in DB['cursor'].fetchall()]
+        return render_template('sql_results.html', query=query, columns=columns, rows=rows)
+    except sqlite3.Error as e:
+        error_message = str(e)
+        return render_template('sql_results.html', query=query, error=error_message)
+    
+@APP.route('/6_Question', methods=['POST'])
+def question6():
+    global DB
+    n_countries = request.form.get('value1')
+    try:
+        n_countries = int(n_countries)
+    except ValueError:
+        return "Invalid input! Please enter a valid number.", 400
+    query = '''
+            SELECT co.country_of_residence, 
+                ROUND((CAST(SUM(b.wealth) as REAL) / co.country_pop)*1000000,2) AS wealth_per_person
+            FROM Billionaires b
+            JOIN Cities c ON b.city_id = c.city_id
+            JOIN States s ON c.state_id = s.state_id
+            JOIN Countries co ON s.country_id = co.country_id
+            GROUP BY co.country_of_residence
+            ORDER BY wealth_per_person DESC
+            LIMIT ?;
+        '''
+    try:
+        question = execute(query, [n_countries])
+        columns = [desc[0] for desc in DB['cursor'].description]
+        rows = [dict(zip(columns, row)) for row in DB['cursor'].fetchall()]
+        return render_template('sql_results.html', query=query, columns=columns, rows=rows)
+    except sqlite3.Error as e:
+        error_message = str(e)
+        return render_template('sql_results.html', query=query, error=error_message)
+
+@APP.route('/7_Question', methods=['POST'])
+def question7():
+    global DB
+    n_billionaires = request.form.get('value1')
+    try:
+        n_billionaires = int(n_billionaires)
+    except ValueError:
+        return "Invalid input! Please enter a valid number.", 400
+    query = '''
+            SELECT b.fullname, 
+              b.age, 
+              co.life_exp, 
+              ROUND((b.age - co.life_exp),1) AS diff
+            FROM Billionaires b
+            JOIN Cities c ON b.city_id = c.city_id
+            JOIN States s ON c.state_id = s.state_id
+            JOIN Countries co ON s.country_id = co.country_id
+            WHERE b.age > co.life_exp
+            ORDER BY diff DESC
+            LIMIT ?;
+        '''
+    try:
+        question = execute(query, [n_billionaires])
+        columns = [desc[0] for desc in DB['cursor'].description]
+        rows = [dict(zip(columns, row)) for row in DB['cursor'].fetchall()]
+        return render_template('sql_results.html', query=query, columns=columns, rows=rows)
+    except sqlite3.Error as e:
+        error_message = str(e)
+        return render_template('sql_results.html', query=query, error=error_message)
+
+@APP.route('/8_Question', methods=['POST'])
+def question8():
+    global DB
+    n_countries = request.form.get('value1')
+    try:
+        n_countries = int(n_countries)
+    except ValueError:
+        return "Invalid input! Please enter a valid number.", 400
+    query = '''
+            SELECT co.country_of_residence, 
+              ROUND((co.gdp_country / co.country_pop),2) AS gdp_per_capita, 
+              COUNT(b.billionaire_id) AS num_billionaires
+            FROM Countries co
+            JOIN States s ON s.country_id = co.country_id
+            JOIN Cities c ON c.state_id = s.state_id
+            LEFT JOIN Billionaires b ON c.city_id = b.city_id
+            GROUP BY co.country_of_residence
+            ORDER BY gdp_per_capita DESC
+            LIMIT ?;
+        '''
+    try:
+        question = execute(query, [n_countries])
+        columns = [desc[0] for desc in DB['cursor'].description]
+        rows = [dict(zip(columns, row)) for row in DB['cursor'].fetchall()]
+        return render_template('sql_results.html', query=query, columns=columns, rows=rows)
+    except sqlite3.Error as e:
+        error_message = str(e)
+        return render_template('sql_results.html', query=query, error=error_message)
+
+@APP.route('/9_Question', methods=['POST'])
+def question9():
+    global DB
+    n_percentage = request.form.get('value1')
+    n_billionaires = request.form.get('value2')
+    try:
+        n_percentage = int(n_percentage)
+        n_billionaires = int(n_billionaires)
+    except ValueError:
+        return "Invalid input! Please enter a valid number.", 400
+    query = '''
+            SELECT co.country_of_residence
+            FROM Countries co
+            JOIN States s ON s.country_id = co.country_id
+            JOIN Cities c ON c.state_id = s.state_id
+            JOIN Billionaires b ON c.city_id = b.city_id
+            WHERE (co.g_tertiary > ?)
+            GROUP BY co.country_of_residence
+            HAVING count(*) >= ?;
+                    '''
+    try:
+        question = execute(query, [n_percentage, n_billionaires])
+        columns = [desc[0] for desc in DB['cursor'].description]
+        rows = [dict(zip(columns, row)) for row in DB['cursor'].fetchall()]
+        return render_template('sql_results.html', query=query, columns=columns, rows=rows)
+    except sqlite3.Error as e:
+        error_message = str(e)
+        return render_template('sql_results.html', query=query, error=error_message)
+    
+@APP.route('/10_Question', methods=['POST'])
+def question10():
+    global DB
     query = '''
             SELECT cont.continent, 
-            AVG(b.wealth) AS avg_wealth, 
-            AVG(b.age) AS avg_age
+            ROUND(AVG(b.wealth),2) AS avg_wealth, 
+            ROUND(AVG(b.age),2) AS avg_age
             FROM Billionaires b
             JOIN Cities c on c.city_id = b.city_id
             JOIN States s on s.state_id = c.state_id
