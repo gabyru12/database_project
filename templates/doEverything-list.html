@@ -29,23 +29,53 @@
                 </tr>
             </thead>
             <tbody>
-                {% for row in rows %}
+                {% for row in references %}
                     <tr>
                         {% for key, value in row.items() %}
-                            {% if key == "billionaire_id" %}
-                                <td><a href="/billionaires/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
-                            {% elif key == "city_id" %}
-                                <td><a href="/cities/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
-                            {% elif key == "state_id" %}
-                                <td><a href="/states/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
-                            {% elif key == "country_id" %}
-                                <td><a href="/countries/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
-                            {% elif key == "company_id" %}
-                                <td><a href="/companies/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
-                            {% elif key == "continent_id" %}
-                                <td><a href="/continents/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
+                            {% if key != first_key %}
+                                {% if key not in ["city_id", "state_id", "country_id", "continent_id"] %}
+                                    {% if key == "billionaire_id" %}
+                                        <td><a href="/billionaires/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
+                                    {% elif key == "city_of_residence" %}
+                                        {% if "city_id" == first_key %}
+                                            <td>{{ value }}</td>
+                                        {% else %}
+                                            <td><a href="/cities/{{ row['city_id'] }}" class="text-decoration-none">{{ value }}</a></td>
+                                        {% endif %}
+                                    {% elif key == "res_state" %}
+                                        {% if "state_id" == first_key %}
+                                            <td>{{ value }}</td>
+                                        {% else %}
+                                            <td><a href="/states/{{ row['state_id'] }}" class="text-decoration-none">{{ value }}</a></td>
+                                        {% endif %}
+                                    {% elif key == "country_of_residence" %}
+                                        {% if "country_id" == first_key %}
+                                            <td>{{ value }}</td>
+                                        {% else %}
+                                            <td><a href="/countries/{{ row['country_id'] }}" class="text-decoration-none">{{ value }}</a></td>
+                                        {% endif %}
+                                    {% elif key == "company_id" %}
+                                        <td><a href="/companies/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
+                                    {% else %}
+                                        <td>{{ value }}</td>
+                                    {% endif %}
+                                {% endif %}
                             {% else %}
-                                <td>{{ value }}</td>
+                                {% if key == "billionaire_id" %}
+                                    <td><a href="/billionaires/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
+                                {% elif key == "city_id" %}
+                                    <td><a href="/cities/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
+                                {% elif key == "state_id" %}
+                                    <td><a href="/states/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
+                                {% elif key == "country_id" %}
+                                    <td><a href="/countries/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
+                                {% elif key == "company_id" %}
+                                    <td><a href="/companies/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
+                                {% elif key == "continent_id" %}
+                                    <td><a href="/continents/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
+                                {% else %}
+                                    <td>{{ value }}</td>
+                                {% endif %}
                             {% endif %}
                         {% endfor %}
                     </tr>
