@@ -3,6 +3,17 @@
 <div class="container mt-4">
     <h1 class="text-center mb-4">💸 Billionaires Database 💸</h1>
 
+    <!-- Table of Contents -->
+    <nav class="mb-4">
+        <h4>Table of Contents</h4>
+        <ul>
+            <li><a href="#db-statistics">Database Statistics</a></li>
+            <li><a href="#analyze-selected-tables">Analyze Selected Tables</a></li>
+            <li><a href="#questions">Analyze Custom Questions</a></li>
+            <li><a href="#execute-sql">Execute Custom SQL Queries</a></li>
+        </ul>
+    </nav>
+
     <!-- About Section -->
     <section class="mb-5">
         <h2>About</h2>
@@ -15,8 +26,9 @@
     </section>
 
     <!-- Database Statistics -->
-    <section class="mb-5">
+    <section id="db-statistics" class="mb-5">
         <h2>Database Statistics</h2>
+        <p>Below is a summary of the total count of rows for each table in the Billionaires database:</p>
         <table class="table table-striped table-bordered">
             <thead class="table-dark">
                 <tr>
@@ -65,9 +77,10 @@
         </table>
     </section>
 
-    <!-- Functionality Section -->
-    <section class="mb-5">
-        <h2>Sample Functionality</h2>
+    <!-- Analyze Tables Section -->
+    <section class="mb-5" id="analyze-selected-tables">
+        <h2>Analyze Tables</h2>
+        <p>Explore individual records or perform searches in key tables such as Billionaires, Companies, Countries, and more:</p>
 
         <!-- Billionaires -->
         <div class="mb-4">
@@ -138,8 +151,68 @@
                 <button type="submit" class="btn btn-primary search-button">Search</button>
             </form>
         </div>
+    </section>
 
-        <!-- SQL Query Section -->
+    <!-- Questions -->
+    <section id="questions" class="mb-5">
+        <h2>Analyze Custom Questions</h2>
+        <p>Answer specific analytical questions using the database:</p>
+        <div class="mb-4">
+            <h5>Quais são as (int) principais indústrias em número de bilionários e qual é a soma da riqueza acumulada em cada uma?</h5>
+            <form method="POST" class="d-flex mb-2" action="/1_Question">
+                <input type="number" class="form-control me-2" name="value1" placeholder="1-1037" required />
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+            <h5>Liste os (int) bilionários mais jovens, incluindo suas idades, nacionalidade, indústrias e riqueza total.</h5>
+            <form method="POST" class="d-flex mb-2" action="/2_Question">
+                <input type="number" class="form-control me-2" name="value1" placeholder="1-2591" required />
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+            <h5>Qual é a média de riqueza e idade dos bilionários agrupados por continente de residência?</h5>
+            <form method="POST" class="d-flex mb-2" action="/3_Question">
+                <button type="submit" class="btn btn-secondary">Show answer</button>
+            </form>
+            
+            <h5>Liste os (int) bilionários mais jovens, incluindo suas idades, nacionalidade, indústrias e riqueza total.</h5>
+            <form method="POST" class="d-flex mb-2" action="/2_Question">
+                <input type="number" class="form-control me-2" name="value1" placeholder="1-2591" required />
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+            <h5>Liste os (int) bilionários mais jovens, incluindo suas idades, nacionalidade, indústrias e riqueza total.</h5>
+            <form method="POST" class="d-flex mb-2" action="/2_Question">
+                <input type="number" class="form-control me-2" name="value1" placeholder="1-2591" required />
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+            <h5>Liste os (int) bilionários mais jovens, incluindo suas idades, nacionalidade, indústrias e riqueza total.</h5>
+            <form method="POST" class="d-flex mb-2" action="/2_Question">
+                <input type="number" class="form-control me-2" name="value1" placeholder="1-2591" required />
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+            <h5>Liste os (int) bilionários mais jovens, incluindo suas idades, nacionalidade, indústrias e riqueza total.</h5>
+            <form method="POST" class="d-flex mb-2" action="/2_Question">
+                <input type="number" class="form-control me-2" name="value1" placeholder="1-2591" required />
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+            <h5>Liste os (int) bilionários mais jovens, incluindo suas idades, nacionalidade, indústrias e riqueza total.</h5>
+            <form method="POST" class="d-flex mb-2" action="/2_Question">
+                <input type="number" class="form-control me-2" name="value1" placeholder="1-2591" required />
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+            <h5>Liste os (int) bilionários mais jovens, incluindo suas idades, nacionalidade, indústrias e riqueza total.</h5>
+            <form method="POST" class="d-flex mb-2" action="/2_Question">
+                <input type="number" class="form-control me-2" name="value1" placeholder="1-2591" required />
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+            <h5>Liste os (int) bilionários mais jovens, incluindo suas idades, nacionalidade, indústrias e riqueza total.</h5>
+            <form method="POST" class="d-flex mb-2" action="/2_Question">
+                <input type="number" class="form-control me-2" name="value1" placeholder="1-2591" required />
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </form>
+        </div>
+    </section>    
+    
+    <!-- SQL Query Section -->
+    <section id="execute-sql" class="mb-5">
         <div class="mb-4">
             <h3>Run SQL Query</h3>
             <form method="POST" action="/run-sql" class="d-flex flex-column">

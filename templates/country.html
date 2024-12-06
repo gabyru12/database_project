@@ -10,11 +10,7 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item"><strong>Country ID:</strong> {{ country.country_id }}</li>
             <li class="list-group-item"><strong>Name:</strong> {{ country.country_of_residence }}</li>
-            <li class="list-group-item"><strong>Continent:</strong> 
-                <a href="/continents/{{ country.continent_id }}" class="text-decoration-none">
-                    {{ country.continent }}
-                </a>
-            </li>
+            <li class="list-group-item"><strong>Continent:</strong> {{ country.continent }}</li>
             <li class="list-group-item"><strong>Latitude:</strong> {{ country.country_latitude }}</li>
             <li class="list-group-item"><strong>Longitude:</strong> {{ country.country_longitude }}</li>
             <li class="list-group-item"><strong>Population:</strong> {{ country.country_pop }}</li>
