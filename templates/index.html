@@ -3,28 +3,6 @@
 <div class="container mt-4">
     <h1 class="text-center mb-4">💸 Billionaires Database 💸</h1>
 
-    <!-- Table of Contents -->
-    <nav class="mb-4">
-        <h4>Table of Contents</h4>
-        <ul>
-            <li><a href="#db-statistics">Database Statistics</a></li>
-            <li><a href="#analyze-selected-tables">Analyze Selected Tables</a></li>
-            <li><a href="#questions">Analyze Custom Questions</a></li>
-            <li><a href="#execute-sql">Execute Custom SQL Queries</a></li>
-        </ul>
-    </nav>
-
-    <!-- About Section -->
-    <section class="mb-5">
-        <h2>About</h2>
-        <p>
-            This web application illustrates the use of the Billionaires database. The application is built using 
-            <a href="https://docs.python.org/3/library/sqlite3.html" target="_blank">sqlite3</a>, 
-            <a href="https://flask.palletsprojects.com" target="_blank">Flask</a>, and 
-            <a href="https://jinja.palletsprojects.com" target="_blank">Jinja</a>.
-        </p>
-    </section>
-
     <!-- Database Statistics -->
     <section id="db-statistics" class="mb-5">
         <h2>Database Statistics</h2>
@@ -79,7 +57,10 @@
 
     <!-- Analyze Tables Section -->
     <section class="mb-5" id="analyze-selected-tables">
-        <h2>Analyze Tables</h2>
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>Analyze Tables</h2>
+            <button class="btn btn-danger" onclick="resetAnalyzeTables()">Reset All</button>
+        </div>
         <p>Explore individual records or perform searches in key tables such as Billionaires, Companies, Countries, and more:</p>
 
         <!-- Billionaires -->
@@ -152,145 +133,126 @@
             </form>
         </div>
     </section>
-
-    <style>
-        .dynamic-input {
-            width: fit-content; /* O tamanho se ajusta ao conteúdo */
-            min-width: 3ch; /* Tamanho mínimo para campos pequenos */
-            max-width: 12ch; /* Limite máximo para evitar inputs muito largos */
-            padding: 0 5px; /* Pequeno espaçamento interno para visualização */
-            text-align: center; /* Centraliza o texto dentro do input */
-        }
-        .form-container {
-            margin-bottom: 2rem; /* Espaçamento entre as perguntas */
-            padding: 1rem;
-            border-bottom: 1px solid #ddd; /* Linha para separar visualmente */
-        }
-        .form-container:last-child {
-            border-bottom: none; /* Remove a linha na última pergunta */
-        }
-    </style>
     
     <section id="questions" class="mb-5">
-        <h2>Analyze Custom Questions</h2>
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>Analyze Custom Questions</h2>
+            <button class="btn btn-danger" onclick="resetAnalyzeQuestions()">Reset All</button>
+        </div>
         <p>Answer specific analytical questions using the database:</p>
-        <div class="mb-4">
-    
-            <div class="form-container">
-                <form method="POST" action="/1_Question">
-                    <h5>
-                        Quais são as 
-                        <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-18" required />
-                        principais indústrias em número de bilionários e qual é a soma da riqueza acumulada em cada uma?
-                    </h5>
-                    <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
-                </form>
-            </div>
-    
-            <div class="form-container">
-                <form method="POST" action="/2_Question">
-                    <h5>
-                        Liste os 
-                        <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-2591" required />
-                        bilionários mais jovens, incluindo suas idades, nacionalidade, indústrias e riqueza total.
-                    </h5>
-                    <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
-                </form>
-            </div>
-    
-            <div class="form-container">
-                <form method="POST" action="/3_Question">
-                    <h5>
-                        Se todos os bilionários de um determinado país (de residência) doassem 
-                        <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-100" required />%
-                        de sua riqueza para aumentar o PIB do país, qual seria o impacto em ppm no PIB? Liste o top 
-                        <input type="number" class="form-control d-inline dynamic-input mx-1" name="value2" placeholder="1-2591" required /> 
-                        países onde isso teria o maior efeito.
-                    </h5>
-                    <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
-                </form>
-            </div>
-    
-            <div class="form-container">
-                <form method="POST" action="/4_Question">
-                    <h5>
-                        Qual o top 
-                        <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-18" required />
-                        indústrias mais comuns em países com latitudes entre 
-                        <input type="number" step="0.1" class="form-control d-inline dynamic-input mx-1" name="value2" placeholder="-90° a 90°" required />° e 
-                        <input type="number" step="0.1" class="form-control d-inline dynamic-input mx-1" name="value3" placeholder="-90° a 90°" required />°?
-                    </h5>
-                    <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
-                </form>
-            </div>
-    
-            <div class="form-container">
-                <form method="POST" action="/5_Question">
-                    <h5>
-                        Liste o top 
-                        <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-774" required /> 
-                        cidades do 
-                        <input type="text" class="form-control d-inline dynamic-input mx-1" name="value2" placeholder="Country" required /> 
-                        com mais bilionários.
-                    </h5>
-                    <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
-                </form>
-            </div>
-    
-            <div class="form-container">
-                <form method="POST" action="/6_Question">
-                    <h5>
-                        Simule a riqueza que cada pessoa de um determinado país teria caso todos os bilionários residentes nesse país doassem o seu património e se distribuísse de igual forma pela população desse mesmo país. Liste o top 
-                        <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-78" required />.
-                    </h5>
-                    <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
-                </form>
-            </div>
-    
-            <div class="form-container">
-                <form method="POST" action="/7_Question">
-                    <h5>
-                        Quais são os bilionários que residem em países onde a expectativa de vida é menor do que a sua idade? Liste o top 
-                        <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-2591" required /> 
-                        com o nome, idade, expectativa de vida do país e número de anos a que já vêm 'desafiando a morte'.
-                    </h5>
-                    <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
-                </form>
-            </div>
-    
-            <div class="form-container">
-                <form method="POST" action="/8_Question">
-                    <h5>
-                        Quais são os 
-                        <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-78" required /> 
-                        países com os maiores valores de PIB per capita (PIB/população do país) e quantos bilionários vivem em cada um deles?
-                    </h5>
-                    <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
-                </form>
-            </div>
-    
-            <div class="form-container">
-                <form method="POST" action="/9_Question">
-                    <h5>
-                        Apresente os países onde a escolaridade está acima de 
-                        <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-100" required />% 
-                        e possuem pelo menos 
-                        <input type="number" class="form-control d-inline dynamic-input mx-1" name="value2" placeholder="1-2591" required /> 
-                        bilionários.
-                    </h5>
-                    <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
-                </form>
-            </div>
-    
-            <div class="form-container">
-                <form method="POST" action="/10_Question">
-                    <h5>
-                        Qual é a média de riqueza e idade dos bilionários agrupados por continente de residência?
-                    </h5>
-                    <button type="submit" class="btn btn-primary w-100 mt-2">Show answer</button>
-                </form>
-            </div>
-    
+        <div class="form-container">
+            <form method="POST" action="/1_Question">
+                <h5>
+                    Quais são as 
+                    <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-18" required />
+                    principais indústrias em número de bilionários e qual é a soma da riqueza acumulada em cada uma?
+                </h5>
+                <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <form method="POST" action="/2_Question">
+                <h5>
+                    Liste os 
+                    <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-2591" required />
+                    bilionários mais jovens, incluindo suas idades, nacionalidade, indústrias e riqueza total.
+                </h5>
+                <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <form method="POST" action="/3_Question">
+                <h5>
+                    Se todos os bilionários de um determinado país (de residência) doassem 
+                    <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-100" required />%
+                    de sua riqueza para aumentar o PIB do país, qual seria o impacto em ppm no PIB? Liste o top 
+                    <input type="number" class="form-control d-inline dynamic-input mx-1" name="value2" placeholder="1-2591" required /> 
+                    países onde isso teria o maior efeito.
+                </h5>
+                <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <form method="POST" action="/4_Question">
+                <h5>
+                    Qual o top 
+                    <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-18" required />
+                    indústrias mais comuns em países com latitudes entre 
+                    <input type="number" step="0.1" class="form-control d-inline dynamic-input mx-1" name="value2" placeholder="-90° a 90°" required />° e 
+                    <input type="number" step="0.1" class="form-control d-inline dynamic-input mx-1" name="value3" placeholder="-90° a 90°" required />°?
+                </h5>
+                <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <form method="POST" action="/5_Question">
+                <h5>
+                    Liste o top 
+                    <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-774" required /> 
+                    cidades do 
+                    <input type="text" class="form-control d-inline dynamic-input mx-1" name="value2" placeholder="Country" required /> 
+                    com mais bilionários.
+                </h5>
+                <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <form method="POST" action="/6_Question">
+                <h5>
+                    Simule a riqueza que cada pessoa de um determinado país teria caso todos os bilionários residentes nesse país doassem o seu património e se distribuísse de igual forma pela população desse mesmo país. Liste o top 
+                    <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-78" required />.
+                </h5>
+                <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <form method="POST" action="/7_Question">
+                <h5>
+                    Quais são os bilionários que residem em países onde a expectativa de vida é menor do que a sua idade? Liste o top 
+                    <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-2591" required /> 
+                    com o nome, idade, expectativa de vida do país e número de anos a que já vêm 'desafiando a morte'.
+                </h5>
+                <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <form method="POST" action="/8_Question">
+                <h5>
+                    Quais são os 
+                    <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-78" required /> 
+                    países com os maiores valores de PIB per capita (PIB/população do país) e quantos bilionários vivem em cada um deles?
+                </h5>
+                <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <form method="POST" action="/9_Question">
+                <h5>
+                    Apresente os países onde a escolaridade está acima de 
+                    <input type="number" class="form-control d-inline dynamic-input mx-1" name="value1" placeholder="1-100" required />% 
+                    e possuem pelo menos 
+                    <input type="number" class="form-control d-inline dynamic-input mx-1" name="value2" placeholder="1-2591" required /> 
+                    bilionários.
+                </h5>
+                <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <form method="POST" action="/10_Question">
+                <h5>
+                    Qual é a média de riqueza e idade dos bilionários agrupados por continente de residência?
+                </h5>
+                <button type="submit" class="btn btn-primary w-100 mt-2">Show answer</button>
+            </form>
         </div>
     </section>
     
@@ -303,6 +265,17 @@
                 <button type="submit" class="btn btn-danger">Execute SQL</button>
             </form>
         </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="mb-5">
+        <h2>About</h2>
+        <p>
+            This web application illustrates the use of the Billionaires database. The application is built using 
+            <a href="https://docs.python.org/3/library/sqlite3.html" target="_blank">sqlite3</a>, 
+            <a href="https://flask.palletsprojects.com" target="_blank">Flask</a>, and 
+            <a href="https://jinja.palletsprojects.com" target="_blank">Jinja</a>.
+        </p>
     </section>
 </div>
 {% endblock %}

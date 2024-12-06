@@ -8,6 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom Styles -->
     <style>
+
+        /* Espaço antes de cada título */
+        h2, h3 {
+            scroll-margin-top: 57px; /* Ajuste a margem conforme a altura do cabeçalho */
+        }
+
         body {
             background-color: #f8f9fa;
             color: #212529;
@@ -43,56 +49,147 @@
 
         /* Navbar Styling */
         .navbar {
-            background-color: #e3f2fd; /* Light blue */
-            border-bottom: 2px solid #007bff; /* Darker border for contrast */
-            font-size: 0.875rem; /* Smaller font size for navbar text */
-            padding: 0.5rem 1rem; /* Reduce padding for a sleeker appearance */
+            background-color: #212529; /* Cinza escuro */
+            border-bottom: 2px solid #12161a; /* Preto para contraste */
+            font-size: 0.875rem; /* Tamanho menor para o texto */
+            padding: 0.5rem 1rem; /* Aparência mais compacta */
         }
 
         .navbar-brand {
-            font-size: 1rem; /* Smaller font size for brand */
+            font-size: 1rem; /* Tamanho ajustado */
             font-weight: bold;
-            color: #007bff;
+            color: #f8f9fa; /* Branco */
             transition: color 0.3s ease;
         }
 
         .navbar-brand:hover {
-            color: #0056b3;
+            color: #adb5bd; /* Cinza claro ao passar o mouse */
             text-decoration: none;
         }
 
         .nav-link {
-            color: #212529; /* Dark text for links */
+            color: #f8f9fa; /* Branco */
             transition: color 0.3s ease;
         }
 
         .nav-link:hover {
-            color: #007bff;
+            color: #adb5bd; /* Cinza claro */
             text-decoration: none;
         }
 
         .nav-link.active {
-            color: #0056b3;
+            color: #adb5bd; /* Cinza claro */
             font-weight: bold;
         }
 
-        /* Optional: Remove Navbar Corners */
-        .navbar {
-            border-radius: 0;
+        /* Estilo para tornar o cabeçalho sticky */
+        .sticky-header {
+            position: sticky;
+            top: 0; /* Fixa no topo da janela */
+            z-index: 1020; /* Garante que esteja acima de outros elementos */
+            background-color: #212529; /* Cinza escuro */
+            border-bottom: 2px solid #12161a; /* Preto para contraste */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Sombra escura para destaque */
+        }
+
+        /* Botão no Modo Responsivo */
+        .navbar-toggler {
+            background-color: #adb5bd; /* Cinza claro para o botão */
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+        }
+
+        .dynamic-input {
+            width: fit-content; /* O tamanho se ajusta ao conteúdo */
+            min-width: 3ch; /* Tamanho mínimo para campos pequenos */
+            max-width: 12ch; /* Limite máximo para evitar inputs muito largos */
+            padding: 0 5px; /* Pequeno espaçamento interno para visualização */
+            text-align: center; /* Centraliza o texto dentro do input */
+        }
+        .form-container {
+            margin-bottom: 2rem; /* Espaçamento entre as perguntas */
+            padding: 1rem;
+            border-bottom: 1px solid #ddd; /* Linha para separar visualmente */
+        }
+        .form-container:last-child {
+            border-bottom: none; /* Remove a linha na última pergunta */
         }
     </style>
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg sticky-header">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">💸 Home</a>
+            <a class="navbar-brand" href="/">🏠︎ Home</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#db-statistics">Database Statistics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#analyze-selected-tables">Analyze Tables</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#questions">Analyze Questions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#execute-sql">Run SQL Queries</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </nav>
+    </nav>    
 
     <!-- Main Content Area -->
     <div class="container">
         {% block content %}{% endblock %}
     </div>
+
+    <!-- JavaScript to Adjust Scroll for Sticky Header -->
+    <script>
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('href').slice(1); // Remove o '#' do ID
+                const targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    e.preventDefault(); // Evita o comportamento padrão do clique
+                    const headerOffset = document.querySelector('.sticky-header').offsetHeight;
+                    const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                    const offsetPosition = elementPosition - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+
+    <!-- Scripts para os Resets -->
+    <script>
+        // Function to reset inputs in Analyze Tables
+        function resetAnalyzeTables() {
+            const analyzeTablesSection = document.getElementById('analyze-selected-tables');
+            const inputs = analyzeTablesSection.querySelectorAll('input');
+            inputs.forEach(input => input.value = '');
+        }
+
+        // Function to reset inputs in Analyze Custom Questions
+        function resetAnalyzeQuestions() {
+            const questionsSection = document.getElementById('questions');
+            const inputs = questionsSection.querySelectorAll('input');
+            inputs.forEach(input => input.value = '');
+        }
+    </script>
 </body>
 </html>
