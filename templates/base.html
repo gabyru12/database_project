@@ -191,5 +191,108 @@
             inputs.forEach(input => input.value = '');
         }
     </script>
+
+    <!-- Script para o Gráfico -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Dados enviados do backend
+        const chartData = JSON.parse('{{ chart_data | safe }}');
+
+        // Configuração inicial para "Average Wealth"
+        let currentDataset = "avg_wealth";
+        const continentColors = {
+            Africa: '#28A745',        // Verde
+            Asia: '#FFD700',          // Amarelo
+            Europe: '#FF7F00',        // Laranja
+            'North America': '#FF0000', // Vermelho
+            Oceania: '#007BFF',       // Azul
+            'South America': '#6F42C1' // Roxo
+        };
+
+        // Mapeia as cores com base nos labels (continentes)
+        const vibrantColors = chartData.labels.map(label => continentColors[label]);
+
+        // Criar contexto do Canvas
+        const ctx = document.getElementById('dynamicChart').getContext('2d');
+
+        // Configuração do gráfico
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: chartData.labels, // Continents
+                datasets: [{
+                    label: 'Average Wealth (in millions)',
+                    data: chartData[currentDataset],
+                    backgroundColor: vibrantColors, // Cores por continente
+                    hoverBackgroundColor: vibrantColors, // Não alterar cor no hover
+                    borderWidth: 0, // Sem bordas
+                    barThickness: 60 // Barras robustas
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true, // Mantém proporção
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: false // Remove linhas de grade
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value.toFixed(2); // Formato curto
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false // Remove linhas de grade no eixo X
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            boxWidth: 0, // Remove o quadrado de cor ao lado da legenda
+                            padding: 20   // Ajusta o espaçamento entre os itens da legenda
+                        },
+                        onClick: function(e) {
+                            e.stopPropagation(); // Desabilita o comportamento de ocultar barras ao clicar
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#f8f9fa',
+                        titleColor: '#000',
+                        bodyColor: '#000'
+                    }
+                },
+                layout: {
+                    padding: {
+                        top: 10,
+                        bottom: 10
+                    }
+                }
+            }
+        });
+
+        // Alternar entre "Average Wealth" e "Average Age"
+        const toggleButton = document.getElementById('toggleChart');
+        toggleButton.addEventListener('click', () => {
+            if (currentDataset === "avg_wealth") {
+                currentDataset = "avg_age";
+                toggleButton.textContent = "Switch to Average Wealth";
+                chart.data.datasets[0].label = "Average Age";
+                chart.data.datasets[0].data = chartData[currentDataset];
+            } else {
+                currentDataset = "avg_wealth";
+                toggleButton.textContent = "Switch to Average Age";
+                chart.data.datasets[0].label = "Average Wealth (in millions)";
+                chart.data.datasets[0].data = chartData[currentDataset];
+            }
+            chart.update(); // Atualizar o gráfico
+        });
+    </script>
 </body>
 </html>

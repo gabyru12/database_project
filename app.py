@@ -3,6 +3,7 @@ warnings.filterwarnings('ignore', category=FutureWarning)
 from flask import Flask, request, render_template, abort
 import logging
 import sqlite3
+import json
 import re
 
 APP = Flask(__name__)
@@ -740,12 +741,24 @@ def question10():
         question = execute(query)
         columns = [desc[0] for desc in DB['cursor'].description]
         rows = [dict(zip(columns, row)) for row in DB['cursor'].fetchall()]
-        return render_template('sql_results.html', query=query, columns=columns, rows=rows)
+
+        # Preparar os dados para o gráfico
+        chart_data = {
+            "labels": [row['continent'] for row in rows],
+            "avg_wealth": [row['avg_wealth'] for row in rows],
+            "avg_age": [row['avg_age'] for row in rows]
+        }
+
+        return render_template(
+            'sql_results.html',
+            query=query,
+            columns=columns,
+            rows=rows,
+            chart_data=json.dumps(chart_data)
+        )
     except sqlite3.Error as e:
         error_message = str(e)
         return render_template('sql_results.html', query=query, error=error_message)
-
-PROHIBITEDCOMMANDS = ["DROP", "DELETE", "UPDATE", "INSERT", "ALTER", "TRUNCATE", "REPLACE", "CREATE"]
 
 @APP.route('/run-sql', methods=['POST'])
 def runsql():
