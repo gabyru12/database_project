@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">🔍 Industry Search</h1>
+    
+    <!-- Display the search expression -->
+    <p><b>Search expression:</b> "{{ search.expr }}"</p>
+
+    <!-- Results Section -->
+    <div class="mt-4">
+        {% if industries %}
+            <ul class="list-group">
+                {% for i in industries %}
+                    <li class="list-group-item">
+                        <a href="/industries/{{ i.industry_id }}" class="text-decoration-none">
+                            {{ i.industry }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No industries found matching your search.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

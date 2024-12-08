@@ -13,6 +13,8 @@
             Companies Table
         {% elif columns[0] == "state_id" %}
             States Table
+        {% elif columns[0] == "industry_id" %}
+            Industries Table
         {% else %}
             Data Table
         {% endif %}
@@ -48,6 +50,12 @@
                                         {% else %}
                                             <td><a href="/states/{{ row['state_id'] }}" class="text-decoration-none">{{ value }}</a></td>
                                         {% endif %}
+                                    {% elif key == "industry" %}
+                                        {% if "industry_id" == first_key %}
+                                            <td>{{ value }}</td>
+                                        {% else %}
+                                            <td><a href="/industries/{{ row['industry_id'] }}" class="text-decoration-none">{{ value }}</a></td>
+                                        {% endif %}
                                     {% elif key == "country_of_residence" %}
                                         {% if "country_id" == first_key %}
                                             <td>{{ value }}</td>
@@ -71,8 +79,8 @@
                                     <td><a href="/countries/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
                                 {% elif key == "company_id" %}
                                     <td><a href="/companies/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
-                                {% elif key == "continent_id" %}
-                                    <td><a href="/continents/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
+                                {% elif key == "industry_id" %}
+                                    <td><a href="/industries/{{ value }}" class="text-decoration-none">{{ value }}</a></td>
                                 {% else %}
                                     <td>{{ value }}</td>
                                 {% endif %}

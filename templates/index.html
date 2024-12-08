@@ -51,6 +51,10 @@
                     <td>Citizenships</td>
                     <td>{{ stats.n_Citizenships }}</td>
                 </tr>
+                <tr>
+                    <td>Industries</td>
+                    <td>{{ stats.n_Industries }}</td>
+                </tr>
             </tbody>
         </table>
     </section>
@@ -129,6 +133,19 @@
             </form>
             <form name="statesearch" class="d-flex" action="javascript:window.open('/states/search/'+document.forms['statesearch'].elements['expr'].value,'_self')">
                 <input class="form-control me-2" placeholder="Search (e.g., Texas)" name="expr" id="expr" required />
+                <button type="submit" class="btn btn-primary search-button">Search</button>
+            </form>
+        </div>
+
+        <div class="mb-4">
+            <h3>Industries</h3>
+            <a href="/industries" class="btn btn-primary mb-2">List All Industries</a>
+            <form name="industryid" class="d-flex mb-2" action="javascript:window.open('/industries/'+document.forms['industryid'].elements['id'].value,'_self')">
+                <input class="form-control me-2" placeholder="Industry ID" name="id" type="number" min="1" required />
+                <button type="submit" class="btn btn-secondary">Get Info</button>
+            </form>
+            <form name="industrysearch" class="d-flex" action="javascript:window.open('/industries/search/'+document.forms['industrysearch'].elements['expr'].value,'_self')">
+                <input class="form-control me-2" placeholder="Search (e.g., Technology)" name="expr" id="expr" required />
                 <button type="submit" class="btn btn-primary search-button">Search</button>
             </form>
         </div>
