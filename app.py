@@ -55,6 +55,8 @@ def index():
       (SELECT COUNT(*) n_Billionaire_Companies FROM Billionaire_Companies)
     JOIN 
       (SELECT COUNT(*) n_Citizenships FROM Citizenships)
+    JOIN 
+      (SELECT COUNT(*) n_Industries FROM Industries)
     ''').fetchone()
     logging.info(stats)
     return render_template('index.html',stats=stats)
@@ -101,7 +103,7 @@ def list_billionaires():
 def get_billionaire(id):
   billionaire = execute(
       '''
-      SELECT b.billionaire_id, b.firstname, b.lastname, b.fullname, b.age, b.gender, b.birth_date, b.birth_day, b.birth_month, b.birth_year, b.position, b.wealth, b.city_id, c.city_of_residence, c1.country_id, c1.country_of_residence, com.company_id, com.resource, com.industry, ci.citizenship
+      SELECT b.billionaire_id, b.firstname, b.lastname, b.fullname, b.age, b.gender, b.birth_date, b.birth_day, b.birth_month, b.birth_year, b.position, b.wealth, b.city_id, c.city_of_residence, c1.country_id, c1.country_of_residence, com.company_id, com.resource, ind.industry, ci.citizenship
       FROM Billionaires b
       JOIN Citizenships ci on ci.citizenship_country_id = b.citizenship_country_id
       JOIN Cities c on b.city_id = c.city_id
@@ -109,6 +111,7 @@ def get_billionaire(id):
       JOIN Countries c1 on s.country_id = c1.country_id
       JOIN Billionaire_Companies bc on bc.billionaire_id = b.billionaire_id
       JOIN Companies com on com.company_id = bc.company_id
+      JOIN Industries ind on ind.industry_id = com.industry_id
       WHERE b.billionaire_id = ? 
       ''', [id]).fetchone()
 
@@ -137,9 +140,10 @@ def search_billionaire(expr):
 def list_companies():
     global DB
     companies = execute('''
-      SELECT company_id, resource, industry 
-      FROM Companies
-      ORDER BY company_id
+      SELECT c.company_id, c.resource, ind.industry 
+      FROM Companies c
+      JOIN Industries ind on ind.industry_id = c.industry_id
+      ORDER BY c.company_id
     ''')
 
     columns = [desc[0] for desc in DB['cursor'].description]
@@ -154,9 +158,10 @@ def list_companies():
 def view_company_details(id):
   company = execute(
     '''
-    SELECT company_id, resource, industry
-    FROM Companies 
-    WHERE company_id = ?
+    SELECT c.company_id, c.resource, ind.industry
+    FROM Companies c
+    JOIN Industries ind on ind.industry_id = c.industry_id
+    WHERE c.company_id = ?
     ''', [id]).fetchone()
 
   if company is None:
@@ -377,6 +382,69 @@ def search_state(expr):
   return render_template('state-search.html',
            search=search,states=states)
 
+# Industries
+@APP.route('/industries/')
+def list_industries():
+    global DB
+    industries = execute('''
+      SELECT ind.industry_id, ind.industry
+      FROM Industries ind
+      ORDER BY ind.industry_id
+    ''')
+
+    columns = [desc[0] for desc in DB['cursor'].description]
+    references = [dict(zip(columns, row)) for row in DB['cursor'].fetchall()]
+
+    first_key = next(iter(references[0]))  
+
+    return render_template('doEverything-list.html', columns=columns, references=references, first_key=first_key)
+
+@APP.route('/industries/<int:id>/')
+def view_industry_details(id):
+  industry = execute(
+    '''
+    SELECT ind.industry_id, ind.industry
+    FROM Industries ind
+    JOIN Companies com on com.industry_id = ind.industry_id
+    WHERE ind.industry_id = ?
+    ''', [id]).fetchone()
+
+  if industry is None:
+     abort(404, 'State_id {} does not exist.'.format(id))
+
+  industry_companies = execute(
+     '''
+    SELECT ind.industry_id, ind.industry, com.company_id, com.resource
+    from Industries ind
+    JOIN Companies com on com.industry_id = ind.industry_id
+    WHERE ind.industry_id = ? 
+    ''', [id]).fetchall()
+
+  density = execute(
+    """
+    SELECT round(cast(count(*) as real)/(SELECT count(*) from Billionaires)*100, 2) as density_in_percentage
+    from Industries ind
+    JOIN Companies com on com.industry_id = ind.industry_id
+    WHERE ind.industry_id = ?
+    """, [id])
+  
+  return render_template('industry.html', 
+           industry=industry, industry_companies=industry_companies, density=density)
+
+@APP.route('/industries/search/<expr>/')
+def search_industry(expr):
+  search = { 'expr': expr }
+  expr = '%' + expr + '%'
+  industries = execute(
+      ''' 
+      SELECT ind.industry_id, ind.industry
+      FROM Industries ind
+      WHERE ind.industry LIKE ?
+      ''', [expr]).fetchall()
+  
+  return render_template('industry-search.html',
+           search=search,industries=industries)
+
 @APP.route('/1_Question', methods=['POST'])
 def question1():
     global DB
@@ -386,11 +454,12 @@ def question1():
     except ValueError:
         return "Invalid input! Please enter a valid number.", 400
     query = '''
-            SELECT c.industry, COUNT(b.billionaire_id) AS num_billionaires, SUM(b.wealth) AS total_wealth_millions
+            SELECT ind.industry, COUNT(b.billionaire_id) AS num_billionaires, SUM(b.wealth) AS total_wealth_millions
             FROM Billionaire_Companies bc
             JOIN Billionaires b ON bc.billionaire_id = b.billionaire_id
             JOIN Companies c ON bc.company_id = c.company_id
-            GROUP BY c.industry
+            JOIN Industries ind on ind.industry_id = c.industry_id
+            GROUP BY ind.industry
             ORDER BY COUNT(b.billionaire_id) DESC
             LIMIT ?;
         '''
@@ -413,11 +482,12 @@ def question2():
     except ValueError:
         return "Invalid input! Please enter a valid number.", 400
     query = '''
-            SELECT b.fullname, b.age, cz.citizenship, c.industry , b.wealth AS 'wealth (millions)'
+            SELECT b.fullname, b.age, cz.citizenship, ind.industry , b.wealth AS 'wealth (millions)'
             FROM Billionaire_Companies bc
             JOIN Companies c ON bc.company_id = c.company_id
             JOIN Billionaires b ON bc.billionaire_id = b.billionaire_id
-            JOin Citizenships cz on b.citizenship_country_id = cz.citizenship_country_id
+            JOIN Citizenships cz on b.citizenship_country_id = cz.citizenship_country_id
+            JOIN Industries ind on ind.industry_id = c.industry_id
             ORDER BY b.age
             LIMIT ?;
         '''
@@ -480,16 +550,17 @@ def question4():
     except ValueError:
         return "Invalid input! Please enter a valid number.", 400
     query = '''
-            SELECT c.industry, 
+            SELECT ind.industry, 
               COUNT(DISTINCT co.country_of_residence) AS num_countries
             FROM Companies c
+            JOIN Industries ind on ind.industry_id = c.industry_id
             JOIN Billionaire_Companies bc ON c.company_id = bc.company_id
             JOIN Billionaires b ON bc.billionaire_id = b.billionaire_id
             JOIN Cities c ON b.city_id = c.city_id
             JOIN States s ON c.state_id = s.state_id
             JOIN Countries co ON s.country_id = co.country_id
             WHERE co.country_latitude BETWEEN ? AND ?
-            GROUP BY c.industry
+            GROUP BY ind.industry
             ORDER BY num_countries DESC
             LIMIT ?;
         '''
