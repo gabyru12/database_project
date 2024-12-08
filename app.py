@@ -760,6 +760,8 @@ def question10():
         error_message = str(e)
         return render_template('sql_results.html', query=query, error=error_message)
 
+PROHIBITEDCOMMANDS = ["DROP", "DELETE", "UPDATE", "INSERT", "ALTER", "TRUNCATE", "REPLACE", "CREATE"]
+
 @APP.route('/run-sql', methods=['POST'])
 def runsql():
     global DB
