@@ -609,7 +609,7 @@ def question5():
             JOIN Cities c ON b.city_id = c.city_id
             JOIN States s ON c.state_id = s.state_id
             JOIN Countries co ON s.country_id = co.country_id
-            WHERE co.country_of_residence = ?
+            WHERE co.country_of_residence like ?
             GROUP BY ci.city_of_residence
             ORDER BY num_billionaires DESC
             LIMIT ?;
