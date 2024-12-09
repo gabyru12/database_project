@@ -238,8 +238,18 @@ def view_country_details(id):
     WHERE c.country_id = ? 
     ''', [id]).fetchall()
 
+  density = execute(
+    """
+    SELECT round(cast(count(*) as real)/(SELECT count(*) from Billionaires)*100, 2) AS density_in_percentage
+    FROM Billionaires b
+    JOIN Cities c on c.city_id = b.city_id
+    JOIN States s on s.state_id = c.state_id
+    JOIN Countries c1 on c1.country_id = s.country_id
+    WHERE c1.country_id = ?
+    """, [id]).fetchone()
+
   return render_template('country.html', 
-           country=country, country_city=country_city)
+           country=country, country_city=country_city, density=density)
 
 @APP.route('/countries/search/<expr>/')
 def search_countries(expr):
@@ -388,9 +398,13 @@ def search_state(expr):
 def list_industries():
     global DB
     industries = execute('''
-      SELECT ind.industry_id, ind.industry
+      SELECT ind.industry_id, ind.industry, round(cast(count(*) as real)/(SELECT count(*) from Billionaires)*100, 2) AS density_in_percentage
       FROM Industries ind
-      ORDER BY ind.industry_id
+      JOIN Companies com on com.industry_id = ind.industry_id
+      JOIN Billionaire_Companies bc on bc.company_id = com.company_id
+      JOIN Billionaires b on b.billionaire_id = bc.billionaire_id
+      GROUP by ind.industry
+      ORDER by ind.industry_id
     ''')
 
     columns = [desc[0] for desc in DB['cursor'].description]
@@ -423,11 +437,13 @@ def view_industry_details(id):
 
   density = execute(
     """
-    SELECT round(cast(count(*) as real)/(SELECT count(*) from Billionaires)*100, 2) as density_in_percentage
+    SELECT round(cast(count(*) as real)/(SELECT count(*) from Billionaires)*100, 2) AS density_in_percentage
     from Industries ind
     JOIN Companies com on com.industry_id = ind.industry_id
+    JOIN Billionaire_Companies bc on bc.company_id = com.company_id
+    JOIN Billionaires b on b.billionaire_id = bc.billionaire_id
     WHERE ind.industry_id = ?
-    """, [id])
+    """, [id]).fetchone()
   
   return render_template('industry.html', 
            industry=industry, industry_companies=industry_companies, density=density)
