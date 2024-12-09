@@ -481,14 +481,16 @@ def question1():
     except ValueError:
         return "Invalid input! Please enter a valid number.", 400
     query = '''
-            SELECT ind.industry, COUNT(b.billionaire_id) AS num_billionaires, SUM(b.wealth) AS total_wealth_millions
-            FROM Billionaire_Companies_Industries bci
-            JOIN Billionaires b ON bci.billionaire_id = b.billionaire_id
-            JOIN Companies c ON bci.company_id = c.company_id
-            JOIN Industries ind on ind.industry_id = bci.industry_id
-            GROUP BY ind.industry
-            ORDER BY COUNT(b.billionaire_id) DESC
-            LIMIT ?;
+            SELECT aux.industry, COUNT(aux.billionaire_id) AS num_billionaires, SUM(aux.wealth) AS total_wealth_millions
+            FROM (
+                SELECT distinct b.billionaire_id, b.wealth, ind.industry
+                FROM Billionaires b
+                JOIN Billionaire_Companies_Industries bci ON bci.billionaire_id = b.billionaire_id
+                JOIN Industries ind on ind.industry_id = bci.industry_id
+                ) as aux
+            GROUP BY aux.industry
+            ORDER BY COUNT(aux.billionaire_id) DESC
+            LIMIT ?
         '''
     try:
         question = execute(query, [n_industries])
