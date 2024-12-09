@@ -10,7 +10,6 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item"><strong>Company ID:</strong> {{ company.company_id }}</li>
             <li class="list-group-item"><strong>Resource:</strong> {{ company.resource }}</li>
-            <li class="list-group-item"><strong>Industry:</strong> {{ company.industry }}</li>
         </ul>
 
         <!-- Billionaires Associated with the Company -->
@@ -27,6 +26,21 @@
             </ul>
         {% else %}
             <p class="text-muted">No billionaires found associated with this company.</p>
+        {% endif %}
+
+        <h3 class="mt-4 mb-3">Industries associated to this company</h3>
+        {% if industries_company %}
+            <ul class="list-group">
+                {% for ic in industries_company %}
+                    <li class="list-group-item">
+                        <a href="/industries/{{ ic.industry_id }}" class="text-decoration-none">
+                            {{ ic.industry }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No industries found associated with this company.</p>
         {% endif %}
     </div>
 </div>

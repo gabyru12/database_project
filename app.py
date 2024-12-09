@@ -53,7 +53,7 @@ def index():
     JOIN 
       (SELECT COUNT(*) n_Companies FROM Companies)
     JOIN 
-      (SELECT COUNT(*) n_Billionaire_Companies FROM Billionaire_Companies)
+      (SELECT COUNT(*) n_Billionaire_Companies_Industries FROM Billionaire_Companies_Industries)
     JOIN 
       (SELECT COUNT(*) n_Citizenships FROM Citizenships)
     JOIN 
@@ -68,10 +68,8 @@ def list_billionaires():
     global DB
     billionaires = execute(
       '''
-      SELECT b.billionaire_id, b.fullname, b.age, b.wealth, c1.city_of_residence, c2.country_of_residence, c.company_id 
+      SELECT b.billionaire_id, b.fullname, b.age, b.wealth, c1.city_of_residence, c2.country_of_residence
       FROM Billionaires b
-      JOIN Billionaire_Companies bc on b.billionaire_id = bc.billionaire_id
-      JOIN Companies c on c.company_id = bc.company_id
       JOIN Cities c1 on c1.city_id = b.city_id
       JOIN States s on s.state_id = c1.state_id
       JOIN Countries c2 on c2.country_id = s.country_id
@@ -82,10 +80,8 @@ def list_billionaires():
     
     references = execute(
       '''
-      SELECT b.billionaire_id, b.fullname, b.age, b.wealth, b.city_id, c1.city_of_residence, c2.country_id, c2.country_of_residence, c.company_id 
+      SELECT b.billionaire_id, b.fullname, b.age, b.wealth, b.city_id, c1.city_of_residence, c2.country_id, c2.country_of_residence 
       FROM Billionaires b
-      JOIN Billionaire_Companies bc on b.billionaire_id = bc.billionaire_id
-      JOIN Companies c on c.company_id = bc.company_id
       JOIN Cities c1 on c1.city_id = b.city_id
       JOIN States s on s.state_id = c1.state_id
       JOIN Countries c2 on c2.country_id = s.country_id
@@ -104,23 +100,30 @@ def list_billionaires():
 def get_billionaire(id):
   billionaire = execute(
       '''
-      SELECT b.billionaire_id, b.firstname, b.lastname, b.fullname, b.age, b.gender, b.birth_date, b.birth_day, b.birth_month, b.birth_year, b.position, b.wealth, b.city_id, c.city_of_residence, c1.country_id, c1.country_of_residence, com.company_id, com.resource, ind.industry, ci.citizenship
+      SELECT b.billionaire_id, b.firstname, b.lastname, b.fullname, b.age, b.gender, b.birth_date, b.birth_day, b.birth_month, b.birth_year, b.position, b.wealth, b.city_id, c.city_of_residence, c1.country_id, c1.country_of_residence, ci.citizenship
       FROM Billionaires b
       JOIN Citizenships ci on ci.citizenship_country_id = b.citizenship_country_id
       JOIN Cities c on b.city_id = c.city_id
       JOIN States s on s.state_id = c.state_id
       JOIN Countries c1 on s.country_id = c1.country_id
-      JOIN Billionaire_Companies bc on bc.billionaire_id = b.billionaire_id
-      JOIN Companies com on com.company_id = bc.company_id
-      JOIN Industries ind on ind.industry_id = com.industry_id
       WHERE b.billionaire_id = ? 
       ''', [id]).fetchone()
 
   if billionaire is None:
      abort(404, 'Billionaire_id {} does not exist.'.format(id))
+
+  company_industry = execute(
+      '''
+      SELECT c.company_id, c.resource, i.industry_id, i.industry
+      FROM Billionaires b
+      JOIN Billionaire_Companies_Industries bci on bci.billionaire_id = b.billionaire_id
+      JOIN Companies c on c.company_id = bci.company_id
+      JOIN Industries i on i.industry_id = bci.industry_id
+      WHERE b.billionaire_id = ? 
+      ''', [id]).fetchall()
   
   return render_template('billionaire.html', 
-           billionaire=billionaire)
+           billionaire=billionaire, company_industry=company_industry)
 
 @APP.route('/billionaires/search/<expr>/')
 def search_billionaire(expr):
@@ -141,9 +144,8 @@ def search_billionaire(expr):
 def list_companies():
     global DB
     companies = execute('''
-      SELECT c.company_id, c.resource, ind.industry 
+      SELECT c.company_id, c.resource
       FROM Companies c
-      JOIN Industries ind on ind.industry_id = c.industry_id
       ORDER BY c.company_id
     ''')
 
@@ -159,9 +161,8 @@ def list_companies():
 def view_company_details(id):
   company = execute(
     '''
-    SELECT c.company_id, c.resource, ind.industry
+    SELECT c.company_id, c.resource
     FROM Companies c
-    JOIN Industries ind on ind.industry_id = c.industry_id
     WHERE c.company_id = ?
     ''', [id]).fetchone()
 
@@ -170,15 +171,24 @@ def view_company_details(id):
 
   billionaire_companies = execute(
     '''
-    SELECT bc.billionaire_id, b.fullname
-    FROM Billionaire_Companies bc
-    JOIN Billionaires b on b.billionaire_id = bc.billionaire_id
-    WHERE bc.company_id = ?
+    SELECT bci.billionaire_id, b.fullname
+    FROM Billionaire_Companies_Industries bci
+    JOIN Billionaires b on b.billionaire_id = bci.billionaire_id
+    WHERE bci.company_id = ?
     ORDER BY b.fullname
     ''', [id]).fetchall()
 
+  industries_company = execute(
+    '''
+    SELECT distinct bci.industry_id, i.industry
+    FROM Billionaire_Companies_Industries bci
+    JOIN Companies c on c.company_id = bci.company_id
+    JOIN Industries i on i.industry_id = bci.industry_id
+    WHERE bci.company_id = ?
+    ''', [id]).fetchall()
+
   return render_template('company.html', 
-           company=company, billionaire_companies=billionaire_companies)
+           company=company, billionaire_companies=billionaire_companies, industries_company=industries_company)
  
 @APP.route('/companies/search/<expr>/')
 def search_companies(expr):
@@ -400,9 +410,9 @@ def list_industries():
     industries = execute('''
       SELECT ind.industry_id, ind.industry, round(cast(count(*) as real)/(SELECT count(*) from Billionaires)*100, 2) AS density_in_percentage
       FROM Industries ind
-      JOIN Companies com on com.industry_id = ind.industry_id
-      JOIN Billionaire_Companies bc on bc.company_id = com.company_id
-      JOIN Billionaires b on b.billionaire_id = bc.billionaire_id
+      JOIN Billionaire_Companies_Industries bci on bci.industry_id = ind.industry_id
+      JOIN Companies com on com.company_id = bci.company_id
+      JOIN Billionaires b on b.billionaire_id = bci.billionaire_id
       GROUP by ind.industry
       ORDER by ind.industry_id
     ''')
@@ -420,7 +430,6 @@ def view_industry_details(id):
     '''
     SELECT ind.industry_id, ind.industry
     FROM Industries ind
-    JOIN Companies com on com.industry_id = ind.industry_id
     WHERE ind.industry_id = ?
     ''', [id]).fetchone()
 
@@ -429,9 +438,10 @@ def view_industry_details(id):
 
   industry_companies = execute(
      '''
-    SELECT ind.industry_id, ind.industry, com.company_id, com.resource
+    SELECT distinct ind.industry_id, ind.industry, com.company_id, com.resource
     from Industries ind
-    JOIN Companies com on com.industry_id = ind.industry_id
+    JOIN Billionaire_Companies_Industries bci on bci.industry_id = ind.industry_id
+    JOIN Companies com on com.company_id = bci.company_id
     WHERE ind.industry_id = ? 
     ''', [id]).fetchall()
 
@@ -439,9 +449,9 @@ def view_industry_details(id):
     """
     SELECT round(cast(count(*) as real)/(SELECT count(*) from Billionaires)*100, 2) AS density_in_percentage
     from Industries ind
-    JOIN Companies com on com.industry_id = ind.industry_id
-    JOIN Billionaire_Companies bc on bc.company_id = com.company_id
-    JOIN Billionaires b on b.billionaire_id = bc.billionaire_id
+    JOIN Billionaire_Companies_Industries bci on bci.industry_id = ind.industry_id
+    JOIN Companies com on com.company_id = bci.company_id
+    JOIN Billionaires b on b.billionaire_id = bci.billionaire_id
     WHERE ind.industry_id = ?
     """, [id]).fetchone()
   
@@ -472,10 +482,10 @@ def question1():
         return "Invalid input! Please enter a valid number.", 400
     query = '''
             SELECT ind.industry, COUNT(b.billionaire_id) AS num_billionaires, SUM(b.wealth) AS total_wealth_millions
-            FROM Billionaire_Companies bc
-            JOIN Billionaires b ON bc.billionaire_id = b.billionaire_id
-            JOIN Companies c ON bc.company_id = c.company_id
-            JOIN Industries ind on ind.industry_id = c.industry_id
+            FROM Billionaire_Companies_Industries bci
+            JOIN Billionaires b ON bci.billionaire_id = b.billionaire_id
+            JOIN Companies c ON bci.company_id = c.company_id
+            JOIN Industries ind on ind.industry_id = bci.industry_id
             GROUP BY ind.industry
             ORDER BY COUNT(b.billionaire_id) DESC
             LIMIT ?;
@@ -500,11 +510,11 @@ def question2():
         return "Invalid input! Please enter a valid number.", 400
     query = '''
             SELECT b.fullname, b.age, cz.citizenship, ind.industry , b.wealth AS 'wealth (millions)'
-            FROM Billionaire_Companies bc
-            JOIN Companies c ON bc.company_id = c.company_id
-            JOIN Billionaires b ON bc.billionaire_id = b.billionaire_id
+            FROM Billionaire_Companies_Industries bci
+            JOIN Companies c ON bci.company_id = c.company_id
+            JOIN Billionaires b ON bci.billionaire_id = b.billionaire_id
             JOIN Citizenships cz on b.citizenship_country_id = cz.citizenship_country_id
-            JOIN Industries ind on ind.industry_id = c.industry_id
+            JOIN Industries ind on ind.industry_id = bci.industry_id
             ORDER BY b.age
             LIMIT ?;
         '''
@@ -570,9 +580,9 @@ def question4():
             SELECT ind.industry, 
               COUNT(DISTINCT co.country_of_residence) AS num_countries
             FROM Companies c
-            JOIN Industries ind on ind.industry_id = c.industry_id
-            JOIN Billionaire_Companies bc ON c.company_id = bc.company_id
-            JOIN Billionaires b ON bc.billionaire_id = b.billionaire_id
+            JOIN Billionaire_Companies_Industries bci ON c.company_id = bci.company_id
+            JOIN Industries ind on ind.industry_id = bci.industry_id
+            JOIN Billionaires b ON bci.billionaire_id = b.billionaire_id
             JOIN Cities c ON b.city_id = c.city_id
             JOIN States s ON c.state_id = s.state_id
             JOIN Countries co ON s.country_id = co.country_id
@@ -602,15 +612,14 @@ def question5():
     except ValueError:
         return "Invalid input! Please enter a valid number.", 400
     query = '''
-            SELECT ci.city_of_residence, 
+            SELECT c.city_of_residence, 
               COUNT(b.billionaire_id) AS num_billionaires
             FROM Billionaires b
-            JOIN Cities ci ON b.city_id = ci.city_id
             JOIN Cities c ON b.city_id = c.city_id
             JOIN States s ON c.state_id = s.state_id
             JOIN Countries co ON s.country_id = co.country_id
             WHERE co.country_of_residence like ?
-            GROUP BY ci.city_of_residence
+            GROUP BY c.city_of_residence
             ORDER BY num_billionaires DESC
             LIMIT ?;
         '''

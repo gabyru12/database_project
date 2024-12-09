@@ -42,13 +42,21 @@
                     {{ billionaire.country_of_residence }}
                 </a>
             </li>
-            <li class="list-group-item">
-                <strong>Company:</strong> 
-                <a href="/companies/{{ billionaire.company_id }}" class="text-decoration-none">
-                    {{ billionaire.resource }}, {{ billionaire.industry }}
-                </a>
-            </li>
         </ul>
+
+        <h3 class="mt-4 mb-3">Companies / Industry</h3>
+        {% if company_industry %}
+            <ul class="list-group">
+                {% for ci in company_industry %}
+                    <li class="list-group-item">
+                        <a href="/companies/{{ ci.company_id }}" class="text-decoration-none">{{ ci.resource }},</a>
+                        <a href="/industries/{{ ci.industry_id }}" class="text-decoration-none"> {{ ci.industry }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No companies associated to this billionaire.</p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
