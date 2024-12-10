@@ -486,8 +486,8 @@ def question1():
                 SELECT distinct b.billionaire_id, b.wealth, ind.industry
                 FROM Billionaires b
                 JOIN Billionaire_Companies_Industries bci ON bci.billionaire_id = b.billionaire_id
-                JOIN Industries ind on ind.industry_id = bci.industry_id
-                ) as aux
+                JOIN Industries ind ON ind.industry_id = bci.industry_id
+                ) AS aux
             GROUP BY aux.industry
             ORDER BY COUNT(aux.billionaire_id) DESC
             LIMIT ?
